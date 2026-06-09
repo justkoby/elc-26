@@ -73,6 +73,7 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: hidden;
 }
 
 body {
@@ -96,6 +97,13 @@ p {
   color: var(--text-muted);
   font-size: 0.95rem;
   font-weight: 400;
+}
+
+/* App Container */
+.app-container {
+  overflow-x: hidden;
+  width: 100%;
+  position: relative;
 }
 
 /* Section Wrappers */
@@ -2046,6 +2054,32 @@ p {
     padding-top: 5rem;
     padding-left: 1.5rem;
     padding-right: 1.5rem;
+  }
+
+  .register-grid-container {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+
+  .leaders-band-wrap {
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .leaders-stats-row {
+    gap: 2rem;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .statement-grid {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+
+  .statement-right {
+    border-left: none;
+    padding-left: 0;
   }
 }
 
