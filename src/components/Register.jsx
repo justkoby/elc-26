@@ -14,24 +14,24 @@ const Register = () => {
 
   const tiers = [
     {
-      label: 'Tuition Fee Waiver',
-      title: '7-Week Guided Cohort',
-      note: 'Sponsored by Ministry & UN Partners',
+      label: 'Program Tuition',
+      title: '7-Week Full Program',
+      note: 'All 500 selected delegates — fully covered',
       currency: '$',
       price: '0',
       featured: false
     },
     {
-      label: 'Accreditation Pass',
-      title: 'MUN General Assembly Ticket',
-      note: 'Includes credentials, banquets, and materials',
-      currency: '$',
-      price: '0',
+      label: 'Graduation Fee',
+      title: 'Successful Graduates Only',
+      note: 'Nominal fee payable upon program completion',
+      currency: '',
+      price: 'TBD',
       featured: true
     },
     {
       label: 'Application Fee',
-      title: 'Form Processing Tier',
+      title: 'Form Processing',
       note: 'Waived for 2026 intake cycle',
       currency: '$',
       price: '0',
@@ -83,17 +83,17 @@ const Register = () => {
           {/* Left Intro Info */}
           <div className="register-intro">
             <p>
-              To maintain the highest standard of diplomatic debate, cohort applications undergo a thorough double-blind review process. Candidates are scored on academic history, leadership records, and writing strength in the Statement of Purpose.
+              All 500 selected delegates participate in the full seven-week program, delivered through flexible weekend online and in-person classes. Admission is merit-based, assessed through a thorough double-blind review of academic history, leadership records, and Statement of Purpose.
             </p>
             <div className="register-note-box">
-              Admission selections are entirely merit-based. Selected participants receive full waivers covering all instruction fees, study packs, and certificates.
+              The program is fully funded — there are no tuition or application fees. Only successful graduates will be required to pay a nominal graduation fee upon completion.
             </div>
             
             <div className="register-free-highlight">
               <span className="register-free-icon">✨</span>
               <div className="register-free-text">
-                <span className="register-free-title">Full Sponsorship Waived</span>
-                <span className="register-free-desc">All selected cohort members attend at zero tuition fee. Week 7 catering and banquet access are covered.</span>
+                <span className="register-free-title">Free to Participate</span>
+                <span className="register-free-desc">All 500 selected delegates attend the full 7-week program at zero cost. A nominal graduation fee applies only upon successful completion.</span>
               </div>
             </div>
 

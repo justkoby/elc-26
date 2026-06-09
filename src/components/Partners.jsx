@@ -5,7 +5,10 @@ const Partners = () => {
     { src: '/UN.png', alt: 'United Nations' },
     { src: '/mof.png', alt: 'Ministry of Finance' },
     { src: '/britishcouncillog.jpg', alt: 'British Council' },
-    { src: '/aasulogo.png', alt: 'All-Africa Students Union (AASU)' }
+    { src: '/aasulogo.png', alt: 'All-Africa Students Union (AASU)' },
+    { src: '/ydi.png', alt: 'Youth Diplomacy Institute' },
+    { src: '/sdgss.png', alt: 'SDG Summer School' },
+    { src: '/maucn.jpeg', alt: 'MAUCN' }
   ];
 
   // We duplicate the logos array multiple times to ensure the CSS logoScroll marquee is seamless

@@ -10,8 +10,8 @@ const FAQ = () => {
       a: 'Aspiring leaders aged 18 to 35 from any African nation are eligible. We welcome university undergraduates, postgraduates, junior policy officers, public servants, and grassroots community organizers.'
     },
     {
-      q: 'Are there any fees or hidden costs for participating?',
-      a: 'No. The program is fully funded by our diplomatic and public sector partners. There are zero application fees, zero tuition fees, and study material packets are supplied free of charge.'
+      q: 'Are there any fees for participating?',
+      a: 'The program is fully funded — there are no application fees and no tuition fees. Study material packets are provided free of charge. Only successful graduates will be required to pay a nominal graduation fee upon completing the program.'
     },
     {
       q: 'How does the hybrid format work for virtual and in-person sessions?',
