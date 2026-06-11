@@ -5,28 +5,20 @@ const Register = () => {
 
   const tiers = [
     {
-      label: 'Program Tuition',
-      title: '7-Week Full Program',
-      note: 'All 500 selected delegates — fully covered',
-      currency: '$',
-      price: '0',
+      label: 'APPLICATION',
+      title: 'Apply to the Cohort',
+      note: 'Open to all eligible applicants aged 18-30',
+      currency: '',
+      price: 'FREE',
       featured: false
     },
     {
-      label: 'Graduation Fee',
-      title: 'Successful Graduates Only',
-      note: 'Nominal fee payable upon program completion',
-      currency: '',
+      label: 'GRADUATION (SUCCESSFUL DELEGATES ONLY)',
+      title: 'Enrolment & Graduation Fee',
+      note: 'Payable only upon successful completion — Marriott Hotel',
+      currency: 'GH¢',
       price: 'TBD',
       featured: true
-    },
-    {
-      label: 'Application Fee',
-      title: 'Form Processing',
-      note: 'Waived for 2026 intake cycle',
-      currency: '$',
-      price: '0',
-      featured: false
     }
   ];
 
@@ -69,11 +61,11 @@ const Register = () => {
               <h3 className="contact-card-title">Admissions Secretariat</h3>
               <div className="contact-row" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                 <Mail size={16} color="var(--un-blue)" />
-                <span>Email:</span> admissions@ylc-mun.org
+                <span>Email:</span> Cohortyouthleadership@gmail.com
               </div>
               <div className="contact-row" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                 <Phone size={16} color="var(--un-blue)" />
-                <span>Hotline:</span> +233 302 987 654
+                <span>Hotline:</span> 0204070817
               </div>
               <div className="contact-row" style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem' }}>
                 <MapPin size={16} color="var(--un-blue)" style={{ marginTop: '3px' }} />
