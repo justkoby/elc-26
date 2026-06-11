@@ -94,18 +94,20 @@ const Register = () => {
               ))}
             </div>
 
-            <button 
-              disabled
+            <a 
+              href="https://docs.google.com/forms/d/e/1FAIpQLSf4-q_C45S3G6pWXIMyPwG__W5kMyQ-aUYaM1oFKJND4Opmag/viewform?usp=publish-editor"
+              target="_blank"
+              rel="noopener noreferrer"
               className="btn btn-primary" 
               style={{ 
                 width: '100%', 
                 padding: '1.1rem',
-                opacity: 0.5,
-                cursor: 'not-allowed'
+                display: 'block',
+                textAlign: 'center'
               }}
             >
-              Applications Opening Soon
-            </button>
+              Apply Now
+            </a>
           </div>
         </div>
       </div>
