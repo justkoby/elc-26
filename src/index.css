@@ -395,7 +395,7 @@ p {
 /* Hero Section (Solid Blue) */
 .hero-container {
   position: relative;
-  height: 750px;
+  height: 550px;
   width: 100%;
   display: flex;
   align-items: center;
@@ -576,7 +576,7 @@ p {
 .partners-ticker-track {
   display: flex;
   width: max-content;
-  animation: logoScroll 22s linear infinite;
+  animation: logoScroll 45s linear infinite;
   gap: 5rem;
   padding: 0.5rem 0;
 }
@@ -601,6 +601,15 @@ p {
 .partners-logo-item img:hover {
   filter: grayscale(0%) opacity(100%);
   transform: scale(1.05);
+}
+
+.partners-logo-item img[src$="mof.png"] {
+  transform: scale(1.35);
+}
+
+.partners-logo-item img[src$="mof.png"]:hover {
+  filter: grayscale(0%) opacity(100%);
+  transform: scale(1.4);
 }
 
 @keyframes logoScroll {
