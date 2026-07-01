@@ -10,6 +10,7 @@ import Programme from './components/Programme';
 import Tracks from './components/Tracks';
 import Assembly from './components/Assembly';
 import Who from './components/Who';
+import Ambassadors from './components/Ambassadors';
 import FAQ from './components/FAQ';
 import Register from './components/Register';
 import Footer from './components/Footer';
@@ -28,6 +29,7 @@ function App() {
       <Tracks />
       <Assembly />
       <Who />
+      <Ambassadors />
       <FAQ />
       <Register />
       <Footer />
