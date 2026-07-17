@@ -62,33 +62,13 @@ const Assembly = () => {
 
         {/* Assembly Grid */}
         <div className="assembly-grid-container">
-          {/* Left Venue Card */}
-          <div className="venue-card">
-            <span className="venue-card-tag">Conference Venue</span>
-            <h3 className="venue-card-title">Accra Marriott Hotel</h3>
-            
-            <div className="venue-meta-table">
-              <div className="venue-meta-block">
-                <div className="venue-meta-lbl">Date</div>
-                <div className="venue-meta-val">August 21, 2026</div>
-              </div>
-              <div className="venue-meta-block">
-                <div className="venue-meta-lbl">Seats</div>
-                <div className="venue-meta-val">500 Delegates</div>
-              </div>
-              <div className="venue-meta-block">
-                <div className="venue-meta-lbl">Location</div>
-                <div className="venue-meta-val">Airport City, Accra</div>
-              </div>
-              <div className="venue-meta-block">
-                <div className="venue-meta-lbl">Room</div>
-                <div className="venue-meta-val">Grand Ballroom</div>
-              </div>
-            </div>
-
-            <p className="venue-card-desc">
-              The grand finale is hosted at the Accra Marriott Hotel, located in the heart of Airport City. The venue features state-of-the-art conferencing facilities, dedicated committee breakout rooms, and high-speed translation networks to support our delegates' sessions.
-            </p>
+          {/* Left Venue Card Image Replacement */}
+          <div className="venue-card-image-wrap">
+            <img 
+              src="/un-flag.jpeg" 
+              alt="United Nations Flag" 
+              className="venue-card-image"
+            />
           </div>
 
           {/* Right Agenda Table */}

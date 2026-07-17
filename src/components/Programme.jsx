@@ -58,7 +58,7 @@ const Programme = () => {
       type: 'fn',
       badge: 'FINALE',
       shortTitle: 'Grand Assembly.',
-      desc: 'Public lecture, Model UN Assembly, exhibition, awards, graduation — Marriott Hotel.'
+      desc: 'Public lecture, Model UN Assembly, exhibition, awards, graduation — Yet to be confirmed.'
     }
   ];
 
@@ -183,7 +183,7 @@ const Programme = () => {
               <span className="format-split-weeks">Weeks 1, 2, 3 &amp; 7 &bull; Accra, Ghana</span>
               <ul className="format-split-list">
                 <li>Orientation icebreakers and direct group induction.</li>
-                <li>High-stakes Model UN Assembly debates at Marriott Accra.</li>
+                <li>High-stakes Model UN Assembly debates (Venue to be confirmed).</li>
                 <li>Policy presentation panels and delegate networking.</li>
                 <li>Graduation dinners, credential awards, and leadership banquets.</li>
               </ul>

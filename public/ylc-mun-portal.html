@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YLC-MUN 2026 — Registration & Payment Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --un-dark:    #009EDB;
+    --un-deeper:  #007ab8;
+    --un-darkest: #1E4C7A;
+    --un-tint:    #f5f8fa;
+    --un-tint2:   #e2ecf5;
+    --un-border:  #b6cbde;
+    --un-navy:    #163A5F;
+    --white:      #ffffff;
+    --text-dark:  #1B2430;
+    --text-mid:   #33455b;
+    --text-muted: #5A6A80;
+    --bg:         #F5F7F9;
+    --surface:    #ffffff;
+    --border:     rgba(22, 58, 95, 0.12);
+    --gold:       #D8B25C;
+    --gold-tint:  #fdf9f0;
+    --gold-border:#e8d494;
+    --radius:     12px;
+    --shadow:     0 4px 16px rgba(22, 58, 95, 0.06);
+  }
+
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text-dark);
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  /* Header */
+  header {
+    background: var(--un-navy);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 3px solid var(--un-dark);
+  }
+  .header-inner {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 13px 24px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .logo-mark {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--un-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .logo-mark svg { width: 22px; height: 22px; }
+  .header-text h1 {
+    font-family: 'Reveira Nights', 'Playfair Display', serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+    line-height: 1.2;
+  }
+  .header-text p { font-size: 12px; color: var(--un-tint2); margin-top: 1px; }
+
+  /* Progress bar */
+  .progress-bar {
+    background: rgba(255,255,255,0.1);
+    height: 3px;
+  }
+  .progress-fill {
+    height: 3px;
+    background: var(--un-dark);
+    width: 0%;
+    transition: width 0.4s ease;
+  }
+
+  /* Layout */
+  .main { max-width: 820px; margin: 0 auto; padding: 32px 24px 80px; }
+
+  /* Section divider */
+  .section-divider {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 40px 0 24px;
+  }
+  .section-divider-line { flex: 1; height: 1px; background: var(--border); }
+  .section-divider-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--un-deeper);
+    white-space: nowrap;
+  }
+  .section-divider-label svg { width: 14px; height: 14px; }
+  .section-number {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--un-dark);
+    color: white;
+    font-size: 11px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Hero */
+  .hero {
+    background: var(--un-navy);
+    border-radius: 14px;
+    padding: 30px 28px 26px;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    right: -30px; top: -30px;
+    width: 160px; height: 160px;
+    border-radius: 50%;
+    background: rgba(0,158,219,0.15);
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    right: 40px; bottom: -40px;
+    width: 100px; height: 100px;
+    border-radius: 50%;
+    background: rgba(0,158,219,0.08);
+  }
+  .hero-badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--un-dark);
+    background: rgba(0,158,219,0.18);
+    border: 1px solid rgba(0,158,219,0.35);
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 12px;
+  }
+  .hero h2 {
+    font-family: 'Reveira Nights', 'Playfair Display', serif;
+    font-size: 26px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 8px;
+    line-height: 1.3;
+    position: relative;
+  }
+  .hero p { font-size: 14px; color: rgba(255,255,255,0.75); max-width: 500px; position: relative; }
+  .info-chips { display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap; position: relative; }
+  .chip {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--un-tint2);
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.18);
+    padding: 5px 12px;
+    border-radius: 20px;
+  }
+  .chip svg { width: 12px; height: 12px; }
+  .chip.gold { color: var(--gold); background: rgba(200,168,75,0.12); border-color: rgba(200,168,75,0.3); }
+
+  /* Cards */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 22px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+  }
+  .card-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card-title svg { width: 14px; height: 14px; color: var(--un-deeper); }
+
+  /* Forms */
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 540px) { .form-row { grid-template-columns: 1fr; } }
+  .field { margin-bottom: 14px; }
+  .field label { display: block; font-size: 13px; font-weight: 500; color: var(--text-mid); margin-bottom: 5px; }
+  .field input, .field select, .field textarea {
+    width: 100%;
+    padding: 9px 13px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    color: var(--text-dark);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus {
+    border-color: var(--un-dark);
+    box-shadow: 0 0 0 3px rgba(0,158,219,0.12);
+    background: #fff;
+  }
+  .field textarea { resize: vertical; min-height: 76px; }
+
+  /* Checkboxes */
+  .check-list { display: flex; flex-direction: column; gap: 10px; }
+  .check-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 14px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .check-item:hover { border-color: var(--un-border); background: var(--un-tint); }
+  .check-item.checked { border-color: var(--un-dark); background: var(--un-tint); }
+  .check-item input[type="checkbox"] {
+    width: 17px; height: 17px;
+    flex-shrink: 0; margin-top: 2px;
+    accent-color: var(--un-dark);
+    cursor: pointer;
+  }
+  .check-label { font-size: 14px; color: var(--text-dark); line-height: 1.5; }
+  .check-label small { display: block; font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+  /* Package grid */
+  .pkg-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(155px, 1fr)); gap: 8px; }
+  .pkg-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text-mid);
+    background: var(--un-tint);
+    border: 1px solid var(--un-border);
+    border-radius: var(--radius);
+    padding: 9px 12px;
+    line-height: 1.4;
+  }
+  .pkg-item svg { width: 14px; height: 14px; color: var(--un-deeper); flex-shrink: 0; margin-top: 1px; }
+
+  /* Fee cards */
+  .fee-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+  @media (max-width: 440px) { .fee-grid { grid-template-columns: 1fr; } }
+  .fee-card {
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+    cursor: pointer;
+    transition: all 0.15s;
+    background: var(--surface);
+  }
+  .fee-card:hover { border-color: var(--un-border); background: var(--un-tint); }
+  .fee-card.selected { border-color: var(--un-dark); background: var(--un-tint); }
+  .fee-card .tag { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-muted); margin-bottom: 6px; }
+  .fee-card.selected .tag { color: var(--un-deeper); }
+  .fee-card .amount { font-family: 'Reveira Nights', 'Playfair Display', serif; font-size: 28px; font-weight: 600; color: var(--un-navy); }
+  .fee-card .sub { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+
+  /* Deadline alert */
+  .deadline-note {
+    display: none;
+    align-items: flex-start;
+    gap: 9px;
+    font-size: 13px;
+    color: #7a5500;
+    background: var(--gold-tint);
+    border: 1px solid var(--gold-border);
+    border-radius: var(--radius);
+    padding: 10px 14px;
+    margin-bottom: 14px;
+    line-height: 1.5;
+  }
+  .deadline-note svg { width: 14px; height: 14px; flex-shrink: 0; margin-top: 1px; }
+
+  /* Payment methods */
+  .pay-methods { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+  .pay-method {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 16px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-mid);
+    background: var(--surface);
+    transition: all 0.15s;
+  }
+  .pay-method:hover { border-color: var(--un-border); background: var(--un-tint); }
+  .pay-method.selected { border-color: var(--un-dark); background: var(--un-tint); color: var(--un-navy); }
+  .method-icon {
+    width: 34px; height: 34px;
+    border-radius: 8px;
+    background: var(--un-tint2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .method-icon svg { width: 17px; height: 17px; color: var(--un-deeper); }
+
+  /* Pay detail box */
+  .pay-detail {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--un-dark);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    font-size: 13px;
+    color: var(--text-mid);
+    line-height: 2;
+    margin-bottom: 16px;
+  }
+  .pay-detail strong { color: var(--text-dark); font-weight: 600; }
+  .pay-detail .acct {
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--un-navy);
+    background: var(--un-tint2);
+    padding: 1px 6px;
+    border-radius: 4px;
+  }
+  .pay-detail .amount-due { font-size: 16px; font-weight: 600; color: var(--un-deeper); }
+
+  /* Submit button */
+  .submit-btn {
+    width: 100%;
+    padding: 14px;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    background: var(--un-dark);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+    margin-top: 4px;
+  }
+  .submit-btn:hover { background: var(--un-darkest); }
+  .submit-btn:active { transform: scale(0.99); }
+  .submit-btn:disabled { background: #90b8cc; cursor: not-allowed; transform: none; }
+
+  /* Success */
+  .success-banner {
+    display: none;
+    background: var(--un-tint);
+    border: 1px solid var(--un-border);
+    border-radius: 12px;
+    padding: 28px;
+    text-align: center;
+    margin-bottom: 16px;
+  }
+  .success-icon {
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    background: var(--un-tint2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 14px;
+  }
+  .success-icon svg { width: 26px; height: 26px; color: var(--un-deeper); }
+  .success-banner h3 { font-family: 'Reveira Nights', 'Playfair Display', serif; font-size: 20px; color: var(--un-navy); margin-bottom: 8px; }
+  .success-banner p { font-size: 14px; color: var(--text-mid); max-width: 380px; margin: 0 auto; }
+
+  /* Error */
+  .error-msg {
+    display: none;
+    background: #fef2f2;
+    border: 1px solid #fca5a5;
+    border-radius: var(--radius);
+    padding: 10px 14px;
+    font-size: 13px;
+    color: #991b1b;
+    margin-bottom: 14px;
+  }
+
+  /* Footer */
+  footer {
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-muted);
+    padding: 24px;
+    border-top: 1px solid var(--border);
+    margin-top: 40px;
+  }
+  footer a { color: var(--un-deeper); text-decoration: none; }
+
+  @media (max-width: 600px) {
+    .main { padding: 20px 16px 48px; }
+    .hero { padding: 22px 18px 20px; }
+    .hero h2 { font-size: 21px; }
+    .card { padding: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="logo-mark">
+      <!-- UN emblem simplified -->
+      <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <circle cx="20" cy="20" r="18" stroke="white" stroke-width="1.5"/>
+        <ellipse cx="20" cy="20" rx="9" ry="18" stroke="white" stroke-width="1.2"/>
+        <line x1="2" y1="20" x2="38" y2="20" stroke="white" stroke-width="1.2"/>
+        <line x1="4" y1="12" x2="36" y2="12" stroke="white" stroke-width="1"/>
+        <line x1="4" y1="28" x2="36" y2="28" stroke="white" stroke-width="1"/>
+      </svg>
+    </div>
+    <div class="header-text">
+      <h1>YLC · MUN General Assembly 2026</h1>
+      <p>All Africa Students Union &nbsp;·&nbsp; Youth Diplomacy Institute</p>
+    </div>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+</header>
+
+<main class="main">
+
+  <!-- ══════════════════════════════
+       SECTION 1 — YLC REGISTRATION
+  ══════════════════════════════ -->
+  <div class="section-divider">
+    <div class="section-number">1</div>
+    <div class="section-divider-label">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/><polyline points="16 11 18 13 22 9"/></svg>
+      Youth Leadership Cohort — Registration
+    </div>
+    <div class="section-divider-line"></div>
+  </div>
+
+  <div class="hero">
+    <div class="hero-badge">Congratulations — You've been selected</div>
+    <h2>Youth Leadership Cohort 2026</h2>
+    <p>Complete this section to confirm your place. Your training is fully covered — no fees required.</p>
+    <div class="info-chips">
+      <span class="chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        14 August 2026
+      </span>
+      <span class="chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Accra, Ghana
+      </span>
+      <span class="chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+        Official dress code
+      </span>
+      <span class="chip gold">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/></svg>
+        Free training
+      </span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Your details
+    </div>
+    <div class="form-row">
+      <div class="field"><label for="ylc-name">Full name *</label><input type="text" id="ylc-name" placeholder="As on your application"></div>
+      <div class="field"><label for="ylc-email">Email address *</label><input type="email" id="ylc-email" placeholder="name@example.com"></div>
+    </div>
+    <div class="form-row">
+      <div class="field"><label for="ylc-phone">Phone number</label><input type="tel" id="ylc-phone" placeholder="+233 ..."></div>
+      <div class="field"><label for="ylc-country">Country</label><input type="text" id="ylc-country" placeholder="e.g. Ghana"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+      Confirmations
+    </div>
+    <div class="check-list">
+      <label class="check-item" id="ci-1">
+        <input type="checkbox" id="c1" onchange="toggleCheck('ci-1',this)">
+        <span class="check-label">
+          I accept my offer of admission to the Youth Leadership Cohort 2026.
+          <small>I understand my place is confirmed only upon submitting this form.</small>
+        </span>
+      </label>
+      <label class="check-item" id="ci-2">
+        <input type="checkbox" id="c2" onchange="toggleCheck('ci-2',this)">
+        <span class="check-label">
+          I confirm I will attend the Model UN General Assembly conference.
+          <small>I look forward to representing my delegation at the AASU MUN GA 2026.</small>
+        </span>
+      </label>
+      <label class="check-item" id="ci-3">
+        <input type="checkbox" id="c3" onchange="toggleCheck('ci-3',this)">
+        <span class="check-label">
+          I acknowledge the official dress code and will comply throughout the programme.
+          <small>Smart/formal attire is required for all sessions and ceremonies.</small>
+        </span>
+      </label>
+      <label class="check-item" id="ci-4">
+        <input type="checkbox" id="c4" onchange="toggleCheck('ci-4',this)">
+        <span class="check-label">
+          I understand the YLC training is free of charge — no payment is required from me.
+          <small>All training costs are covered by AASU and the Youth Diplomacy Institute.</small>
+        </span>
+      </label>
+    </div>
+  </div>
+
+  <div class="error-msg" id="ylc-error"></div>
+  <div class="success-banner" id="ylc-success">
+    <div class="success-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <h3>Registration confirmed</h3>
+    <p>Welcome to the Youth Leadership Cohort 2026. A confirmation has been sent to your email. We look forward to seeing you on 14 August in Accra.</p>
+  </div>
+  <button class="submit-btn" id="ylc-btn" onclick="submitYLC()">Confirm my place →</button>
+
+
+  <!-- ══════════════════════════════
+       SECTION 2 — MUN GA PAYMENT
+  ══════════════════════════════ -->
+  <div class="section-divider">
+    <div class="section-number">2</div>
+    <div class="section-divider-label">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+      MUN General Assembly — Delegate Payment
+    </div>
+    <div class="section-divider-line"></div>
+  </div>
+
+  <div class="hero">
+    <div class="hero-badge">Model UN General Assembly 2026</div>
+    <h2>Delegate payment portal</h2>
+    <p>Select your payment plan, complete the transfer, then submit your transaction reference below to secure your delegate place.</p>
+    <div class="info-chips">
+      <span class="chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Deadline: 7 August 2026
+      </span>
+      <span class="chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Accra, Ghana
+      </span>
+      <span class="chip gold">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+        GHS 500 full / GHS 250 part
+      </span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/></svg>
+      Delegate package — what's included
+    </div>
+    <div class="pkg-grid">
+      <div class="pkg-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>Conference & graduation ceremony</div>
+      <div class="pkg-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>Official delegate certificate</div>
+      <div class="pkg-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>Benefits tag & delegate ID</div>
+      <div class="pkg-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>Breakfast, lunch & brunch</div>
+      <div class="pkg-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.63 12"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Study abroad consultative team</div>
+      <div class="pkg-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>Educational resources</div>
+      <div class="pkg-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Fun games & activities</div>
+      <div class="pkg-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Networking gala</div>
+      <div class="pkg-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>5-star venue</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+      Choose a payment plan
+    </div>
+    <div class="fee-grid">
+      <div class="fee-card selected" id="fee-full" onclick="selectFee('full')">
+        <div class="tag">Full payment</div>
+        <div class="amount">GHS 500</div>
+        <div class="sub">Pay once — fully confirmed</div>
+      </div>
+      <div class="fee-card" id="fee-part" onclick="selectFee('part')">
+        <div class="tag">Part payment (50%)</div>
+        <div class="amount">GHS 250</div>
+        <div class="sub">Balance due before the event</div>
+      </div>
+    </div>
+    <div class="deadline-note" id="deadline-note">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      Part payment must be received <strong>before 7 August 2026</strong>. The remaining GHS 250 is due before the conference. Your place is reserved once the first payment is verified.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      Payment method
+    </div>
+    <div class="pay-methods">
+      <div class="pay-method selected" id="pm-momo" onclick="selectMethod('momo')">
+        <div class="method-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+        </div>
+        Mobile Money — MTN / Vodafone Cash
+      </div>
+      <div class="pay-method" id="pm-bank" onclick="selectMethod('bank')">
+        <div class="method-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="3" y1="22" x2="21" y2="22"/><line x1="6" y1="18" x2="6" y2="11"/><line x1="10" y1="18" x2="10" y2="11"/><line x1="14" y1="18" x2="14" y2="11"/><line x1="18" y1="18" x2="18" y2="11"/><polygon points="12 2 20 7 4 7"/></svg>
+        </div>
+        Bank transfer
+      </div>
+    </div>
+
+    <div class="pay-detail" id="detail-momo">
+      <strong>MTN Mobile Money</strong><br>
+      Number: <span class="acct">[MTN MoMo number]</span><br>
+      Account name: <span class="acct">AASU / Youth Diplomacy Institute</span><br><br>
+      <strong>Vodafone Cash</strong><br>
+      Number: <span class="acct">[Vodafone Cash number]</span><br>
+      Account name: <span class="acct">AASU / Youth Diplomacy Institute</span><br><br>
+      Amount to send: <span class="amount-due" id="momo-amount">GHS 500</span><br>
+      After sending, enter your <strong>transaction ID</strong> in the form below.
+    </div>
+
+    <div class="pay-detail" id="detail-bank" style="display:none;">
+      <strong>Account name:</strong> Vertex Youth Diplomacy Institute<br>
+      <strong>Account number:</strong> <span class="acct">12210101811928202</span><br><br>
+      Amount to transfer: <span class="amount-due" id="bank-amount">GHS 500</span><br>
+      After transferring, enter your <strong>bank reference number</strong> below.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      Submit payment confirmation
+    </div>
+    <div class="form-row">
+      <div class="field"><label for="mun-name">Full name *</label><input type="text" id="mun-name" placeholder="As on your application"></div>
+      <div class="field"><label for="mun-email">Email address *</label><input type="email" id="mun-email" placeholder="name@example.com"></div>
+    </div>
+    <div class="form-row">
+      <div class="field"><label for="mun-phone">Phone number</label><input type="tel" id="mun-phone" placeholder="+233 ..."></div>
+      <div class="field"><label for="mun-country">Country</label><input type="text" id="mun-country" placeholder="e.g. Ghana"></div>
+    </div>
+    <div class="field">
+      <label for="mun-txn">Transaction ID / reference number *</label>
+      <input type="text" id="mun-txn" placeholder="e.g. GH241207XXXXXXXX or bank reference">
+    </div>
+    <div class="field">
+      <label for="mun-notes">Additional notes (optional)</label>
+      <textarea id="mun-notes" placeholder="e.g. paid via MTN MoMo, part payment reference, etc."></textarea>
+    </div>
+  </div>
+
+  <div class="error-msg" id="mun-error"></div>
+  <div class="success-banner" id="mun-success">
+    <div class="success-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <h3>Payment confirmation received</h3>
+    <p>The AASU team will verify your payment within 24–48 hours and send your official delegate confirmation to your email.</p>
+  </div>
+  <button class="submit-btn" id="mun-btn" onclick="submitMUN()">Submit payment confirmation →</button>
+
+</main>
+
+<footer>
+  <p>YLC · MUN General Assembly 2026 &nbsp;·&nbsp; All Africa Students Union &nbsp;·&nbsp; Youth Diplomacy Institute</p>
+  <p style="margin-top:6px;">Questions? Contact <a href="mailto:cohortyouthleadership@gmail.com">cohortyouthleadership@gmail.com</a></p>
+</footer>
+
+<script>
+  const GOOGLE_SCRIPT_URL = 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE';
+
+  /* Progress bar on scroll */
+  window.addEventListener('scroll', () => {
+    const d = document.documentElement;
+    const pct = (d.scrollTop / (d.scrollHeight - d.clientHeight)) * 100;
+    document.getElementById('progress').style.width = pct + '%';
+  });
+
+  function toggleCheck(id, cb) {
+    document.getElementById(id).classList.toggle('checked', cb.checked);
+  }
+
+  function selectFee(type) {
+    document.getElementById('fee-full').classList.toggle('selected', type === 'full');
+    document.getElementById('fee-part').classList.toggle('selected', type === 'part');
+    document.getElementById('deadline-note').style.display = type === 'part' ? 'flex' : 'none';
+    const amt = type === 'full' ? 'GHS 500' : 'GHS 250';
+    document.getElementById('momo-amount').textContent = amt;
+    document.getElementById('bank-amount').textContent = amt;
+  }
+
+  function selectMethod(m) {
+    document.getElementById('pm-momo').classList.toggle('selected', m === 'momo');
+    document.getElementById('pm-bank').classList.toggle('selected', m === 'bank');
+    document.getElementById('detail-momo').style.display = m === 'momo' ? 'block' : 'none';
+    document.getElementById('detail-bank').style.display = m === 'bank' ? 'block' : 'none';
+  }
+
+  async function postToSheet(data) {
+    if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes('YOUR_GOOGLE')) return { status: 'ok' };
+    await fetch(GOOGLE_SCRIPT_URL, {
+      method: 'POST', mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    return { status: 'ok' };
+  }
+
+  async function submitYLC() {
+    const name    = document.getElementById('ylc-name').value.trim();
+    const email   = document.getElementById('ylc-email').value.trim();
+    const phone   = document.getElementById('ylc-phone').value.trim();
+    const country = document.getElementById('ylc-country').value.trim();
+    const checks  = ['c1','c2','c3','c4'].every(id => document.getElementById(id).checked);
+    if (!name || !email) { showError('ylc-error','Please enter your name and email address.'); return; }
+    if (!checks) { showError('ylc-error','Please confirm all four statements before submitting.'); return; }
+    const btn = document.getElementById('ylc-btn');
+    btn.disabled = true; btn.textContent = 'Submitting…';
+    try {
+      await postToSheet({ sheet:'YLC_Registration', timestamp:new Date().toISOString(), name, email, phone, country, confirmed_offer:true, confirmed_mun:true, confirmed_dresscode:true, confirmed_free:true });
+      document.getElementById('ylc-success').style.display = 'block';
+      document.getElementById('ylc-success').scrollIntoView({ behavior:'smooth', block:'nearest' });
+      btn.textContent = 'Registration confirmed ✓';
+      document.getElementById('ylc-error').style.display = 'none';
+    } catch(e) {
+      btn.disabled = false; btn.textContent = 'Confirm my place →';
+      showError('ylc-error','Something went wrong. Please try again or email cohortyouthleadership@gmail.com.');
+    }
+  }
+
+  async function submitMUN() {
+    const name    = document.getElementById('mun-name').value.trim();
+    const email   = document.getElementById('mun-email').value.trim();
+    const phone   = document.getElementById('mun-phone').value.trim();
+    const country = document.getElementById('mun-country').value.trim();
+    const txn     = document.getElementById('mun-txn').value.trim();
+    const notes   = document.getElementById('mun-notes').value.trim();
+    const plan    = document.getElementById('fee-full').classList.contains('selected') ? 'Full — GHS 500' : 'Part — GHS 250';
+    const method  = document.getElementById('pm-momo').classList.contains('selected') ? 'Mobile Money' : 'Bank Transfer';
+    if (!name || !email || !txn) { showError('mun-error','Please fill in your name, email, and transaction ID.'); return; }
+    const btn = document.getElementById('mun-btn');
+    btn.disabled = true; btn.textContent = 'Submitting…';
+    try {
+      await postToSheet({ sheet:'MUN_Payments', timestamp:new Date().toISOString(), name, email, phone, country, payment_plan:plan, payment_method:method, transaction_id:txn, notes });
+      document.getElementById('mun-success').style.display = 'block';
+      document.getElementById('mun-success').scrollIntoView({ behavior:'smooth', block:'nearest' });
+      btn.textContent = 'Payment submitted ✓';
+      document.getElementById('mun-error').style.display = 'none';
+    } catch(e) {
+      btn.disabled = false; btn.textContent = 'Submit payment confirmation →';
+      showError('mun-error','Something went wrong. Please try again or email cohortyouthleadership@gmail.com.');
+    }
+  }
+
+  function showError(id, msg) {
+    const el = document.getElementById(id);
+    el.textContent = msg; el.style.display = 'block';
+    el.scrollIntoView({ behavior:'smooth', block:'nearest' });
+  }
+</script>
+</body>
+</html>

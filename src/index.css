@@ -1463,7 +1463,22 @@ p {
   padding: 3rem;
   border-radius: var(--radius-card);
   box-shadow: 0 12px 30px rgba(22, 58, 95, 0.15);
-  
+}
+
+.venue-card-image-wrap {
+  width: 100%;
+  height: 100%;
+  min-height: 450px;
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  box-shadow: 0 12px 30px rgba(22, 58, 95, 0.15);
+}
+
+.venue-card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 .venue-card-tag {

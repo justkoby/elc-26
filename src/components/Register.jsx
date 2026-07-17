@@ -15,7 +15,7 @@ const Register = () => {
     {
       label: 'GRADUATION (SUCCESSFUL DELEGATES ONLY)',
       title: 'Enrolment & Graduation Fee',
-      note: 'Payable only upon successful completion — Marriott Hotel',
+      note: 'Payable only upon successful completion — Venue to be confirmed',
       currency: 'GH¢',
       price: 'TBD',
       featured: true

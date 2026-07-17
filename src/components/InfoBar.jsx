@@ -11,7 +11,7 @@ const InfoBar = () => {
     {
       icon: <MapPin size={20} />,
       label: 'Main Venue',
-      value: 'Marriott Hotel, Accra'
+      value: 'Yet to be confirmed'
     },
     {
       icon: <Users size={20} />,

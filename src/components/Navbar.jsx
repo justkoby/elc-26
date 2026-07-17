@@ -12,6 +12,7 @@ const Navbar = () => {
     { label: 'Tracks', id: 'tracks' },
     { label: 'Assembly', id: 'assembly' },
     { label: 'Partners', id: 'partners' },
+    { label: 'Accept Offer/Registration', url: '/ylc-mun-portal.html', external: true },
     { label: 'FAQ', id: 'faq' }
   ];
 
@@ -27,6 +28,7 @@ const Navbar = () => {
       // Determine active section
       const scrollPosition = window.scrollY + 100;
       for (const link of navLinks) {
+        if (link.external) continue;
         const el = document.getElementById(link.id);
         if (el) {
           const top = el.offsetTop;
@@ -77,17 +79,27 @@ const Navbar = () => {
 
           {/* Desktop Links - Centered */}
           <ul className="nav-links-desktop-center">
-            {navLinks.slice(0, 5).map((link) => (
+            {navLinks.filter(link => link.id !== 'faq').map((link) => (
               <li 
-                key={link.id} 
+                key={link.label || link.id} 
                 className={`nav-link-item ${activeSection === link.id ? 'active' : ''}`}
               >
-                <a 
-                  href={`#${link.id}`}
-                  onClick={(e) => handleLinkClick(e, link.id)}
-                >
-                  {link.label}
-                </a>
+                {link.external ? (
+                  <a 
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {link.label}
+                  </a>
+                ) : (
+                  <a 
+                    href={`#${link.id}`}
+                    onClick={(e) => handleLinkClick(e, link.id)}
+                  >
+                    {link.label}
+                  </a>
+                )}
               </li>
             ))}
           </ul>
@@ -135,13 +147,24 @@ const Navbar = () => {
         {/* Navigation Links inside Drawer */}
         <ul className="mobile-drawer-links">
           {navLinks.map((link) => (
-            <li key={link.id} className="mobile-drawer-link-item">
-              <a 
-                href={`#${link.id}`}
-                onClick={(e) => handleLinkClick(e, link.id)}
-              >
-                {link.label}
-              </a>
+            <li key={link.label || link.id} className="mobile-drawer-link-item">
+              {link.external ? (
+                <a 
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => setIsOpen(false)}
+                >
+                  {link.label}
+                </a>
+              ) : (
+                <a 
+                  href={`#${link.id}`}
+                  onClick={(e) => handleLinkClick(e, link.id)}
+                >
+                  {link.label}
+                </a>
+              )}
             </li>
           ))}
         </ul>

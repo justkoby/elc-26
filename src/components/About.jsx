@@ -52,7 +52,7 @@ const About = () => {
               Drawing on the frameworks and values of the United Nations system, the programme combines structured mentorship, hands-on workshops, policy simulations, and cross-sector learning. Delegates leave with practical experience in diplomacy, resolution drafting, public speaking, and strategic leadership.
             </p>
             <p>
-              The programme concludes with a week-long Grand Finale at the Marriott Hotel, Accra &mdash; featuring a public lecture, a full Model UN General Assembly session, a policy exhibition, and a formal graduation ceremony.
+              The programme concludes with a week-long Grand Finale (venue to be confirmed) &mdash; featuring a public lecture, a full Model UN General Assembly session, a policy exhibition, and a formal graduation ceremony.
             </p>
 
             <div className="about-highlights-card">
