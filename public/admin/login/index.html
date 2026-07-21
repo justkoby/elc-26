@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Youth Leadership Cohort — Admin Portal Login</title>
+  <script>
+    if (window.location.pathname.startsWith('/admin/login')) {
+      sessionStorage.setItem('redirect_path', window.location.pathname + window.location.search);
+      window.location.replace('/index.html');
+    }
+  </script>
+</head>
+<body style="background: #f4f9fd; font-family: sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0;">
+  <div style="text-align: center; color: #013664;">
+    <p>Loading Admin Login...</p>
+  </div>
+</body>
+</html>
