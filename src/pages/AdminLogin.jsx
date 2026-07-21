@@ -17,12 +17,16 @@ const AdminLogin = () => {
     const checkExistingSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session?.user) {
-        const { data: adminRows } = await supabase
-          .from('admin_users')
-          .select('*')
-          .or(`id.eq.${session.user.id},user_id.eq.${session.user.id},email.eq.${session.user.email}`);
+        const userId = session.user.id;
+        const userEmail = session.user.email;
 
-        if (adminRows && adminRows.length > 0) {
+        // Fetch admin rows safely
+        const { data: adminRows } = await supabase.from('admin_users').select('*');
+        const isAuthorized = adminRows && adminRows.some(
+          r => r.user_id === userId || r.id === userId || (r.email && r.email.toLowerCase() === userEmail.toLowerCase())
+        );
+
+        if (isAuthorized) {
           navigate('/admin', { replace: true });
           return;
         }
@@ -64,12 +68,13 @@ const AdminLogin = () => {
       }
 
       // Verify user exists in public.admin_users table
-      const { data: adminRows, error: adminErr } = await supabase
-        .from('admin_users')
-        .select('*')
-        .or(`id.eq.${user.id},user_id.eq.${user.id},email.eq.${user.email}`);
+      const { data: adminRows, error: adminErr } = await supabase.from('admin_users').select('*');
 
-      if (adminErr || !adminRows || adminRows.length === 0) {
+      const isAuthorized = !adminErr && adminRows && adminRows.some(
+        r => r.user_id === user.id || r.id === user.id || (r.email && r.email.toLowerCase() === user.email.toLowerCase())
+      );
+
+      if (!isAuthorized) {
         await supabase.auth.signOut();
         setLoading(false);
         setErrorMsg('You are not authorized to access this dashboard.');

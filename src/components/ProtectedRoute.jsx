@@ -20,13 +20,17 @@ const ProtectedRoute = () => {
 
       try {
         const user = session.user;
-        // Check if user exists in public.admin_users table by id or email
-        const { data: adminRows, error } = await supabase
-          .from('admin_users')
-          .select('*')
-          .or(`id.eq.${user.id},user_id.eq.${user.id},email.eq.${user.email}`);
+        const userId = user.id;
+        const userEmail = user.email;
 
-        if (error || !adminRows || adminRows.length === 0) {
+        // Fetch admin_users rows safely
+        const { data: adminRows, error } = await supabase.from('admin_users').select('*');
+
+        const isAuthorized = !error && adminRows && adminRows.some(
+          r => r.user_id === userId || r.id === userId || (r.email && r.email.toLowerCase() === userEmail.toLowerCase())
+        );
+
+        if (!isAuthorized) {
           console.warn('Unauthorized user attempt:', user.email);
           await supabase.auth.signOut();
           if (mounted) {
