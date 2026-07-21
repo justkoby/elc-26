@@ -19,7 +19,9 @@ import {
   Copy,
   ChevronLeft,
   ChevronRight,
-  ShieldCheck
+  ShieldCheck,
+  CreditCard,
+  FileCheck
 } from 'lucide-react';
 
 const AdminDashboard = () => {
@@ -27,6 +29,9 @@ const AdminDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState('');
   const [applicants, setApplicants] = useState([]);
+
+  // Tab State: 'ALL' | 'SECTION1' (YLC Registrations) | 'SECTION2' (MUN Payments)
+  const [activeTab, setActiveTab] = useState('ALL');
   
   // Filtering & Sorting State
   const [searchQuery, setSearchQuery] = useState('');
@@ -129,6 +134,7 @@ const AdminDashboard = () => {
       admissionAccepted: app.admission_accepted ?? true,
       munAttendanceConfirmed: app.mun_attendance_confirmed ?? true,
       dressCodeAcknowledged: app.dress_code_acknowledged ?? true,
+      hasPayment: Boolean(pSel || pConf),
       method: pSel?.payment_method || pConf?.payment_method || 'N/A',
       amount: pSel?.amount ? `GHS ${pSel.amount}` : 'GHS 500',
       txnRef: pConf?.transaction_reference || 'None',
@@ -148,6 +154,14 @@ const AdminDashboard = () => {
   // Filtered & Searched Applicants
   const filteredApplicants = useMemo(() => {
     return processedApplicants.filter((app) => {
+      // Tab filter
+      if (activeTab === 'SECTION1' && (!app.admissionAccepted && !app.munAttendanceConfirmed)) {
+        return false;
+      }
+      if (activeTab === 'SECTION2' && (app.method === 'N/A' && app.status === 'Pending' && !app.hasPayment)) {
+        return false;
+      }
+
       // Search
       const query = searchQuery.toLowerCase();
       const matchesSearch =
@@ -169,7 +183,7 @@ const AdminDashboard = () => {
 
       return matchesSearch && matchesMethod && matchesStatus;
     });
-  }, [processedApplicants, searchQuery, methodFilter, statusFilter]);
+  }, [processedApplicants, activeTab, searchQuery, methodFilter, statusFilter]);
 
   // Pagination calculation
   const totalPages = Math.ceil(filteredApplicants.length / itemsPerPage) || 1;
@@ -303,7 +317,7 @@ const AdminDashboard = () => {
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement('a');
     link.setAttribute('href', encodedUri);
-    link.setAttribute('download', `YLC_Applicants_${new Date().toISOString().slice(0, 10)}.csv`);
+    link.setAttribute('download', `YLC_${activeTab}_Records_${new Date().toISOString().slice(0, 10)}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -625,6 +639,81 @@ const AdminDashboard = () => {
           </div>
         </div>
 
+        {/* DISTINCT SECTION TABS */}
+        <div style={{
+          display: 'flex',
+          gap: '8px',
+          marginBottom: '20px',
+          borderBottom: '2px solid #d0e6f3',
+          paddingBottom: '0'
+        }}>
+          <button
+            onClick={() => { setActiveTab('ALL'); setCurrentPage(1); }}
+            style={{
+              padding: '12px 20px',
+              fontSize: '13px',
+              fontWeight: 600,
+              borderRadius: '8px 8px 0 0',
+              border: 'none',
+              borderBottom: activeTab === 'ALL' ? '3px solid #009EDB' : '3px solid transparent',
+              background: activeTab === 'ALL' ? '#ffffff' : 'transparent',
+              color: activeTab === 'ALL' ? '#013664' : '#4a6f8a',
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              transition: 'all 0.15s'
+            }}
+          >
+            <Users size={16} color={activeTab === 'ALL' ? '#009EDB' : '#4a6f8a'} />
+            All Records ({processedApplicants.length})
+          </button>
+
+          <button
+            onClick={() => { setActiveTab('SECTION1'); setCurrentPage(1); }}
+            style={{
+              padding: '12px 20px',
+              fontSize: '13px',
+              fontWeight: 600,
+              borderRadius: '8px 8px 0 0',
+              border: 'none',
+              borderBottom: activeTab === 'SECTION1' ? '3px solid #009EDB' : '3px solid transparent',
+              background: activeTab === 'SECTION1' ? '#ffffff' : 'transparent',
+              color: activeTab === 'SECTION1' ? '#013664' : '#4a6f8a',
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              transition: 'all 0.15s'
+            }}
+          >
+            <FileCheck size={16} color={activeTab === 'SECTION1' ? '#009EDB' : '#4a6f8a'} />
+            Section 1: YLC Cohort Registrations
+          </button>
+
+          <button
+            onClick={() => { setActiveTab('SECTION2'); setCurrentPage(1); }}
+            style={{
+              padding: '12px 20px',
+              fontSize: '13px',
+              fontWeight: 600,
+              borderRadius: '8px 8px 0 0',
+              border: 'none',
+              borderBottom: activeTab === 'SECTION2' ? '3px solid #009EDB' : '3px solid transparent',
+              background: activeTab === 'SECTION2' ? '#ffffff' : 'transparent',
+              color: activeTab === 'SECTION2' ? '#013664' : '#4a6f8a',
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              transition: 'all 0.15s'
+            }}
+          >
+            <CreditCard size={16} color={activeTab === 'SECTION2' ? '#009EDB' : '#4a6f8a'} />
+            Section 2 & 3: MUN GA Delegate Payments
+          </button>
+        </div>
+
         {/* Toolbar: Search, Filters & Sorting */}
         <div style={{
           background: '#ffffff',
@@ -661,53 +750,57 @@ const AdminDashboard = () => {
           </div>
 
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', alignItems: 'center' }}>
-            {/* Payment Method Filter */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <Filter size={14} color="#4a6f8a" />
-              <select
-                value={methodFilter}
-                onChange={(e) => { setMethodFilter(e.target.value); setCurrentPage(1); }}
-                style={{
-                  padding: '9px 12px',
-                  fontSize: '13px',
-                  color: '#1c3f5e',
-                  background: '#f4f9fd',
-                  border: '1px solid #d0e6f3',
-                  borderRadius: '8px',
-                  outline: 'none',
-                  cursor: 'pointer'
-                }}
-              >
-                <option value="ALL">All Methods</option>
-                <option value="MTN Mobile Money">MTN Mobile Money</option>
-                <option value="Bank Transfer">Bank Transfer</option>
-                <option value="Book Now, Pay Later">Book Now, Pay Later</option>
-              </select>
-            </div>
+            {/* Payment Method Filter (Visible on ALL and SECTION2) */}
+            {activeTab !== 'SECTION1' && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <Filter size={14} color="#4a6f8a" />
+                <select
+                  value={methodFilter}
+                  onChange={(e) => { setMethodFilter(e.target.value); setCurrentPage(1); }}
+                  style={{
+                    padding: '9px 12px',
+                    fontSize: '13px',
+                    color: '#1c3f5e',
+                    background: '#f4f9fd',
+                    border: '1px solid #d0e6f3',
+                    borderRadius: '8px',
+                    outline: 'none',
+                    cursor: 'pointer'
+                  }}
+                >
+                  <option value="ALL">All Payment Methods</option>
+                  <option value="MTN Mobile Money">MTN Mobile Money</option>
+                  <option value="Bank Transfer">Bank Transfer</option>
+                  <option value="Book Now, Pay Later">Book Now, Pay Later</option>
+                </select>
+              </div>
+            )}
 
-            {/* Payment Status Filter */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <select
-                value={statusFilter}
-                onChange={(e) => { setStatusFilter(e.target.value); setCurrentPage(1); }}
-                style={{
-                  padding: '9px 12px',
-                  fontSize: '13px',
-                  color: '#1c3f5e',
-                  background: '#f4f9fd',
-                  border: '1px solid #d0e6f3',
-                  borderRadius: '8px',
-                  outline: 'none',
-                  cursor: 'pointer'
-                }}
-              >
-                <option value="ALL">All Statuses</option>
-                <option value="Pending">Pending</option>
-                <option value="Awaiting Payment">Awaiting Payment</option>
-                <option value="Verified">Verified</option>
-                <option value="Rejected">Rejected</option>
-              </select>
-            </div>
+            {/* Payment Status Filter (Visible on ALL and SECTION2) */}
+            {activeTab !== 'SECTION1' && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <select
+                  value={statusFilter}
+                  onChange={(e) => { setStatusFilter(e.target.value); setCurrentPage(1); }}
+                  style={{
+                    padding: '9px 12px',
+                    fontSize: '13px',
+                    color: '#1c3f5e',
+                    background: '#f4f9fd',
+                    border: '1px solid #d0e6f3',
+                    borderRadius: '8px',
+                    outline: 'none',
+                    cursor: 'pointer'
+                  }}
+                >
+                  <option value="ALL">All Statuses</option>
+                  <option value="Pending">Pending</option>
+                  <option value="Awaiting Payment">Awaiting Payment</option>
+                  <option value="Verified">Verified</option>
+                  <option value="Rejected">Rejected</option>
+                </select>
+              </div>
+            )}
 
             {/* Sorting */}
             <button
@@ -756,8 +849,8 @@ const AdminDashboard = () => {
           ) : filteredApplicants.length === 0 ? (
             <div style={{ padding: '48px 24px', textAlign: 'center', color: '#4a6f8a' }}>
               <Users size={36} color="#90cfe8" style={{ marginBottom: '12px' }} />
-              <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#013664', margin: '0 0 6px 0' }}>No applicants found</h3>
-              <p style={{ fontSize: '13px', margin: 0 }}>Try clearing your search terms or filter criteria.</p>
+              <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#013664', margin: '0 0 6px 0' }}>No records found</h3>
+              <p style={{ fontSize: '13px', margin: 0 }}>Try clearing your search terms or switching tabs.</p>
             </div>
           ) : (
             <>
@@ -768,10 +861,30 @@ const AdminDashboard = () => {
                       <th style={{ padding: '14px 16px' }}>Reference</th>
                       <th style={{ padding: '14px 16px' }}>Applicant</th>
                       <th style={{ padding: '14px 16px' }}>Contact</th>
-                      <th style={{ padding: '14px 16px' }}>Payment Method</th>
-                      <th style={{ padding: '14px 16px' }}>Txn / Reference</th>
-                      <th style={{ padding: '14px 16px' }}>Status</th>
-                      <th style={{ padding: '14px 16px' }}>Submitted Date</th>
+                      
+                      {/* TAB SPECIFIC HEADERS */}
+                      {activeTab === 'SECTION1' ? (
+                        <>
+                          <th style={{ padding: '14px 16px' }}>Offer Accepted</th>
+                          <th style={{ padding: '14px 16px' }}>MUN Attending</th>
+                          <th style={{ padding: '14px 16px' }}>Dress Code</th>
+                        </>
+                      ) : activeTab === 'SECTION2' ? (
+                        <>
+                          <th style={{ padding: '14px 16px' }}>Payment Method</th>
+                          <th style={{ padding: '14px 16px' }}>Txn / Reference</th>
+                          <th style={{ padding: '14px 16px' }}>Status</th>
+                          <th style={{ padding: '14px 16px' }}>Verified Date</th>
+                        </>
+                      ) : (
+                        <>
+                          <th style={{ padding: '14px 16px' }}>Payment Method</th>
+                          <th style={{ padding: '14px 16px' }}>Txn / Reference</th>
+                          <th style={{ padding: '14px 16px' }}>Status</th>
+                        </>
+                      )}
+
+                      <th style={{ padding: '14px 16px' }}>Date</th>
                       <th style={{ padding: '14px 16px', textAlign: 'right' }}>Actions</th>
                     </tr>
                   </thead>
@@ -791,32 +904,93 @@ const AdminDashboard = () => {
                             <div style={{ color: '#1c3f5e' }}>{app.email}</div>
                             <div style={{ fontSize: '12px', color: '#4a6f8a' }}>{app.phone}</div>
                           </td>
-                          <td style={{ padding: '14px 16px', color: '#1c3f5e', fontWeight: 500 }}>
-                            {app.method}
-                          </td>
-                          <td style={{ padding: '14px 16px', fontFamily: "'Courier New', monospace", color: '#007ab8' }}>
-                            {app.txnRef}
-                          </td>
-                          <td style={{ padding: '14px 16px' }}>
-                            <span style={{
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              gap: '5px',
-                              padding: '4px 10px',
-                              borderRadius: '20px',
-                              fontSize: '12px',
-                              fontWeight: 600,
-                              background: badge.bg,
-                              border: `1px solid ${badge.border}`,
-                              color: badge.color
-                            }}>
-                              {badge.icon}
-                              {app.status}
-                            </span>
-                          </td>
+
+                          {/* SECTION 1 SPECIFIC COLUMNS */}
+                          {activeTab === 'SECTION1' && (
+                            <>
+                              <td style={{ padding: '14px 16px' }}>
+                                <span style={{ color: app.admissionAccepted ? '#047857' : '#991b1b', fontWeight: 600 }}>
+                                  {app.admissionAccepted ? '✓ Yes' : '✕ No'}
+                                </span>
+                              </td>
+                              <td style={{ padding: '14px 16px' }}>
+                                <span style={{ color: app.munAttendanceConfirmed ? '#047857' : '#991b1b', fontWeight: 600 }}>
+                                  {app.munAttendanceConfirmed ? '✓ Yes' : '✕ No'}
+                                </span>
+                              </td>
+                              <td style={{ padding: '14px 16px' }}>
+                                <span style={{ color: app.dressCodeAcknowledged ? '#047857' : '#991b1b', fontWeight: 600 }}>
+                                  {app.dressCodeAcknowledged ? '✓ Yes' : '✕ No'}
+                                </span>
+                              </td>
+                            </>
+                          )}
+
+                          {/* SECTION 2 SPECIFIC COLUMNS */}
+                          {activeTab === 'SECTION2' && (
+                            <>
+                              <td style={{ padding: '14px 16px', color: '#1c3f5e', fontWeight: 500 }}>
+                                {app.method}
+                              </td>
+                              <td style={{ padding: '14px 16px', fontFamily: "'Courier New', monospace", color: '#007ab8' }}>
+                                {app.txnRef}
+                              </td>
+                              <td style={{ padding: '14px 16px' }}>
+                                <span style={{
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: '5px',
+                                  padding: '4px 10px',
+                                  borderRadius: '20px',
+                                  fontSize: '12px',
+                                  fontWeight: 600,
+                                  background: badge.bg,
+                                  border: `1px solid ${badge.border}`,
+                                  color: badge.color
+                                }}>
+                                  {badge.icon}
+                                  {app.status}
+                                </span>
+                              </td>
+                              <td style={{ padding: '14px 16px', color: '#4a6f8a', fontSize: '12px' }}>
+                                {app.verifiedAt ? new Date(app.verifiedAt).toLocaleDateString() : 'N/A'}
+                              </td>
+                            </>
+                          )}
+
+                          {/* ALL RECS COLUMNS */}
+                          {activeTab === 'ALL' && (
+                            <>
+                              <td style={{ padding: '14px 16px', color: '#1c3f5e', fontWeight: 500 }}>
+                                {app.method}
+                              </td>
+                              <td style={{ padding: '14px 16px', fontFamily: "'Courier New', monospace", color: '#007ab8' }}>
+                                {app.txnRef}
+                              </td>
+                              <td style={{ padding: '14px 16px' }}>
+                                <span style={{
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: '5px',
+                                  padding: '4px 10px',
+                                  borderRadius: '20px',
+                                  fontSize: '12px',
+                                  fontWeight: 600,
+                                  background: badge.bg,
+                                  border: `1px solid ${badge.border}`,
+                                  color: badge.color
+                                }}>
+                                  {badge.icon}
+                                  {app.status}
+                                </span>
+                              </td>
+                            </>
+                          )}
+
                           <td style={{ padding: '14px 16px', color: '#4a6f8a', fontSize: '12px' }}>
                             {new Date(app.createdAt).toLocaleDateString()}
                           </td>
+
                           <td style={{ padding: '14px 16px', textAlign: 'right' }}>
                             <div style={{ display: 'inline-flex', gap: '8px' }}>
                               <button
@@ -841,33 +1015,35 @@ const AdminDashboard = () => {
                               </button>
 
                               {/* Status Update Quick Selector */}
-                              <select
-                                value={app.status}
-                                onChange={(e) => {
-                                  if (e.target.value !== app.status) {
-                                    setStatusUpdateTarget({
-                                      applicantId: app.id,
-                                      confirmationId: app.confirmationId,
-                                      newStatus: e.target.value,
-                                      currentStatus: app.status
-                                    });
-                                  }
-                                }}
-                                style={{
-                                  padding: '5px 8px',
-                                  fontSize: '12px',
-                                  borderRadius: '6px',
-                                  border: '1px solid #d0e6f3',
-                                  background: '#ffffff',
-                                  color: '#0d1f2d',
-                                  cursor: 'pointer'
-                                }}
-                              >
-                                <option value="Pending">Pending</option>
-                                <option value="Awaiting Payment">Awaiting Payment</option>
-                                <option value="Verified">Verified</option>
-                                <option value="Rejected">Rejected</option>
-                              </select>
+                              {activeTab !== 'SECTION1' && (
+                                <select
+                                  value={app.status}
+                                  onChange={(e) => {
+                                    if (e.target.value !== app.status) {
+                                      setStatusUpdateTarget({
+                                        applicantId: app.id,
+                                        confirmationId: app.confirmationId,
+                                        newStatus: e.target.value,
+                                        currentStatus: app.status
+                                      });
+                                    }
+                                  }}
+                                  style={{
+                                    padding: '5px 8px',
+                                    fontSize: '12px',
+                                    borderRadius: '6px',
+                                    border: '1px solid #d0e6f3',
+                                    background: '#ffffff',
+                                    color: '#0d1f2d',
+                                    cursor: 'pointer'
+                                  }}
+                                >
+                                  <option value="Pending">Pending</option>
+                                  <option value="Awaiting Payment">Awaiting Payment</option>
+                                  <option value="Verified">Verified</option>
+                                  <option value="Rejected">Rejected</option>
+                                </select>
+                              )}
                             </div>
                           </td>
                         </tr>
@@ -892,7 +1068,7 @@ const AdminDashboard = () => {
               }}>
                 <div>
                   Showing {Math.min((currentPage - 1) * itemsPerPage + 1, filteredApplicants.length)} to{' '}
-                  {Math.min(currentPage * itemsPerPage, filteredApplicants.length)} of {filteredApplicants.length} applicants
+                  {Math.min(currentPage * itemsPerPage, filteredApplicants.length)} of {filteredApplicants.length} records
                 </div>
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -1061,20 +1237,20 @@ const AdminDashboard = () => {
                 marginBottom: '20px'
               }}>
                 <div style={{ fontSize: '12px', fontWeight: 700, color: '#1c3f5e', textTransform: 'uppercase', marginBottom: '10px' }}>
-                  Confirmed Statements
+                  Section 1: Confirmed Statements
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '13px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <CheckCircle2 size={16} color="#059669" />
-                    <span>Admission Offer Accepted</span>
+                    <CheckCircle2 size={16} color={selectedApplicant.admissionAccepted ? "#059669" : "#dc2626"} />
+                    <span>Admission Offer Accepted: <strong>{selectedApplicant.admissionAccepted ? 'Yes' : 'No'}</strong></span>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <CheckCircle2 size={16} color="#059669" />
-                    <span>Model UN GA Attendance Confirmed</span>
+                    <CheckCircle2 size={16} color={selectedApplicant.munAttendanceConfirmed ? "#059669" : "#dc2626"} />
+                    <span>Model UN GA Attendance Confirmed: <strong>{selectedApplicant.munAttendanceConfirmed ? 'Yes' : 'No'}</strong></span>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <CheckCircle2 size={16} color="#059669" />
-                    <span>Official Dress Code Acknowledged</span>
+                    <CheckCircle2 size={16} color={selectedApplicant.dressCodeAcknowledged ? "#059669" : "#dc2626"} />
+                    <span>Official Dress Code Acknowledged: <strong>{selectedApplicant.dressCodeAcknowledged ? 'Yes' : 'No'}</strong></span>
                   </div>
                 </div>
               </div>
