@@ -1,4 +1,4 @@
-import React from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import Partners from './components/Partners';
@@ -15,7 +15,13 @@ import FAQ from './components/FAQ';
 import Register from './components/Register';
 import Footer from './components/Footer';
 
-function App() {
+// Admin & Portal Routes
+import AdminLogin from './pages/AdminLogin';
+import AdminDashboard from './pages/AdminDashboard';
+import ProtectedRoute from './components/ProtectedRoute';
+import Portal from './components/Portal';
+
+function LandingPage() {
   return (
     <div className="app-container">
       <Navbar />
@@ -34,6 +40,25 @@ function App() {
       <Register />
       <Footer />
     </div>
+  );
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        {/* Public Website */}
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/portal" element={<Portal />} />
+        <Route path="/register" element={<Portal />} />
+
+        {/* Custom Admin Auth & Protected Dashboard */}
+        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route element={<ProtectedRoute />}>
+          <Route path="/admin" element={<AdminDashboard />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   );
 }
 
