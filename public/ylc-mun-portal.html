@@ -11,23 +11,23 @@
   :root {
     --un-dark:    #009EDB;
     --un-deeper:  #007ab8;
-    --un-darkest: #1E4C7A;
-    --un-tint:    #f5f8fa;
-    --un-tint2:   #e2ecf5;
-    --un-border:  #b6cbde;
-    --un-navy:    #163A5F;
+    --un-darkest: #00558a;
+    --un-tint:    #eaf6fc;
+    --un-tint2:   #c8e9f8;
+    --un-border:  #90cfe8;
+    --un-navy:    #013664;
     --white:      #ffffff;
-    --text-dark:  #1B2430;
-    --text-mid:   #33455b;
-    --text-muted: #5A6A80;
-    --bg:         #F5F7F9;
+    --text-dark:  #0d1f2d;
+    --text-mid:   #1c3f5e;
+    --text-muted: #4a6f8a;
+    --bg:         #f4f9fd;
     --surface:    #ffffff;
-    --border:     rgba(22, 58, 95, 0.12);
-    --gold:       #D8B25C;
-    --gold-tint:  #fdf9f0;
+    --border:     #d0e6f3;
+    --gold:       #c8a84b;
+    --gold-tint:  #fdf6e3;
     --gold-border:#e8d494;
-    --radius:     12px;
-    --shadow:     0 4px 16px rgba(22, 58, 95, 0.06);
+    --radius:     10px;
+    --shadow:     0 1px 3px rgba(0,86,138,0.08), 0 4px 16px rgba(0,86,138,0.06);
   }
 
   body {
@@ -66,13 +66,13 @@
   }
   .logo-mark svg { width: 22px; height: 22px; }
   .header-text h1 {
-    font-family: 'Reveira Nights', 'Playfair Display', serif;
+    font-family: 'Playfair Display', serif;
     font-size: 16px;
     font-weight: 600;
     color: #fff;
     line-height: 1.2;
   }
-  .header-text p { font-size: 12px; color: var(--un-tint2); margin-top: 1px; }
+  .header-text p { display: none; }
 
   /* Progress bar */
   .progress-bar {
@@ -161,7 +161,7 @@
     margin-bottom: 12px;
   }
   .hero h2 {
-    font-family: 'Reveira Nights', 'Playfair Display', serif;
+    font-family: 'Playfair Display', serif;
     font-size: 26px;
     font-weight: 600;
     color: #fff;
@@ -287,7 +287,7 @@
   .fee-card.selected { border-color: var(--un-dark); background: var(--un-tint); }
   .fee-card .tag { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-muted); margin-bottom: 6px; }
   .fee-card.selected .tag { color: var(--un-deeper); }
-  .fee-card .amount { font-family: 'Reveira Nights', 'Playfair Display', serif; font-size: 28px; font-weight: 600; color: var(--un-navy); }
+  .fee-card .amount { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 600; color: var(--un-navy); }
   .fee-card .sub { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
 
   /* Deadline alert */
@@ -398,7 +398,7 @@
     margin: 0 auto 14px;
   }
   .success-icon svg { width: 26px; height: 26px; color: var(--un-deeper); }
-  .success-banner h3 { font-family: 'Reveira Nights', 'Playfair Display', serif; font-size: 20px; color: var(--un-navy); margin-bottom: 8px; }
+  .success-banner h3 { font-family: 'Playfair Display', serif; font-size: 20px; color: var(--un-navy); margin-bottom: 8px; }
   .success-banner p { font-size: 14px; color: var(--text-mid); max-width: 380px; margin: 0 auto; }
 
   /* Error */
@@ -448,7 +448,7 @@
     </div>
     <div class="header-text">
       <h1>YLC · MUN General Assembly 2026</h1>
-      <p>All Africa Students Union &nbsp;·&nbsp; Youth Diplomacy Institute</p>
+      <p>Youth Leadership Cohort &nbsp;·&nbsp; Youth Diplomacy Institute</p>
     </div>
   </div>
   <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
@@ -524,7 +524,7 @@
         <input type="checkbox" id="c2" onchange="toggleCheck('ci-2',this)">
         <span class="check-label">
           I confirm I will attend the Model UN General Assembly conference.
-          <small>I look forward to representing my delegation at the AASU MUN GA 2026.</small>
+            <small>I look forward to representing my delegation at the YLC MUN GA 2026.</small>
         </span>
       </label>
       <label class="check-item" id="ci-3">
@@ -534,13 +534,7 @@
           <small>Smart/formal attire is required for all sessions and ceremonies.</small>
         </span>
       </label>
-      <label class="check-item" id="ci-4">
-        <input type="checkbox" id="c4" onchange="toggleCheck('ci-4',this)">
-        <span class="check-label">
-          I understand the YLC training is free of charge — no payment is required from me.
-          <small>All training costs are covered by AASU and the Youth Diplomacy Institute.</small>
-        </span>
-      </label>
+
     </div>
   </div>
 
@@ -598,7 +592,7 @@
       <div class="pkg-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>Benefits tag & delegate ID</div>
       <div class="pkg-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>Breakfast, lunch & brunch</div>
       <div class="pkg-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.63 12"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Study abroad consultative team</div>
-      <div class="pkg-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>Educational resources</div>
+      <div class="pkg-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>Educational resources</div>
       <div class="pkg-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Fun games & activities</div>
       <div class="pkg-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Networking gala</div>
       <div class="pkg-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>5-star venue</div>
@@ -638,7 +632,7 @@
         <div class="method-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
         </div>
-        Mobile Money — MTN / Vodafone Cash
+        MTN Mobile Money
       </div>
       <div class="pay-method" id="pm-bank" onclick="selectMethod('bank')">
         <div class="method-icon">
@@ -646,24 +640,35 @@
         </div>
         Bank transfer
       </div>
+      <div class="pay-method" id="pm-later" onclick="selectMethod('later')">
+        <div class="method-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        </div>
+        Book now, pay later
+      </div>
     </div>
 
     <div class="pay-detail" id="detail-momo">
       <strong>MTN Mobile Money</strong><br>
-      Number: <span class="acct">[MTN MoMo number]</span><br>
-      Account name: <span class="acct">AASU / Youth Diplomacy Institute</span><br><br>
-      <strong>Vodafone Cash</strong><br>
-      Number: <span class="acct">[Vodafone Cash number]</span><br>
-      Account name: <span class="acct">AASU / Youth Diplomacy Institute</span><br><br>
+      Number: <span class="acct">0538823965</span><br>
+      Account name: <span class="acct">Youth Diplomacy / Umar Faruk</span><br><br>
       Amount to send: <span class="amount-due" id="momo-amount">GHS 500</span><br>
-      After sending, enter your <strong>transaction ID</strong> in the form below.
+      After sending, enter your <strong>MTN transaction ID</strong> in the form below.
     </div>
 
     <div class="pay-detail" id="detail-bank" style="display:none;">
-      <strong>Account name:</strong> Vertex Youth Diplomacy Institute<br>
-      <strong>Account number:</strong> <span class="acct">12210101811928202</span><br><br>
+      <strong>Bank name:</strong> [Bank name]<br>
+      <strong>Account name:</strong> Youth Diplomacy Institute<br>
+      <strong>Account number:</strong> <span class="acct">12210101811928202</span><br>
+      <strong>Branch:</strong> Legon<br><br>
       Amount to transfer: <span class="amount-due" id="bank-amount">GHS 500</span><br>
-      After transferring, enter your <strong>bank reference number</strong> below.
+      After transferring, enter your <strong>bank reference number</strong> in the form below.
+    </div>
+
+    <div class="pay-detail" id="detail-later" style="display:none; border-left-color: var(--gold);">
+      <strong>Book now, pay later</strong><br><br>
+      After submitting this form, the <strong>YLC team will contact you</strong> with payment instructions to complete your registration.<br><br>
+      ⚠️ Your delegate place is <strong>not confirmed</strong> until payment is received before <strong>7 August 2026</strong>.
     </div>
   </div>
 
@@ -680,9 +685,9 @@
       <div class="field"><label for="mun-phone">Phone number</label><input type="tel" id="mun-phone" placeholder="+233 ..."></div>
       <div class="field"><label for="mun-country">Country</label><input type="text" id="mun-country" placeholder="e.g. Ghana"></div>
     </div>
-    <div class="field">
-      <label for="mun-txn">Transaction ID / reference number *</label>
-      <input type="text" id="mun-txn" placeholder="e.g. GH241207XXXXXXXX or bank reference">
+    <div class="field" id="txn-field">
+      <label for="mun-txn">MTN transaction ID *</label>
+      <input type="text" id="mun-txn" placeholder="e.g. GH241207XXXXXXXX">
     </div>
     <div class="field">
       <label for="mun-notes">Additional notes (optional)</label>
@@ -696,14 +701,14 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
     </div>
     <h3>Payment confirmation received</h3>
-    <p>The AASU team will verify your payment within 24–48 hours and send your official delegate confirmation to your email.</p>
+    <p>The YLC team will verify your payment within 24–48 hours and send your official delegate confirmation to your email.</p>
   </div>
   <button class="submit-btn" id="mun-btn" onclick="submitMUN()">Submit payment confirmation →</button>
 
 </main>
 
 <footer>
-  <p>YLC · MUN General Assembly 2026 &nbsp;·&nbsp; All Africa Students Union &nbsp;·&nbsp; Youth Diplomacy Institute</p>
+  <p>YLC · MUN General Assembly 2026 &nbsp;·&nbsp; Youth Leadership Cohort &nbsp;·&nbsp; Youth Diplomacy Institute</p>
   <p style="margin-top:6px;">Questions? Contact <a href="mailto:cohortyouthleadership@gmail.com">cohortyouthleadership@gmail.com</a></p>
 </footer>
 
@@ -733,8 +738,25 @@
   function selectMethod(m) {
     document.getElementById('pm-momo').classList.toggle('selected', m === 'momo');
     document.getElementById('pm-bank').classList.toggle('selected', m === 'bank');
+    document.getElementById('pm-later').classList.toggle('selected', m === 'later');
     document.getElementById('detail-momo').style.display = m === 'momo' ? 'block' : 'none';
     document.getElementById('detail-bank').style.display = m === 'bank' ? 'block' : 'none';
+    document.getElementById('detail-later').style.display = m === 'later' ? 'block' : 'none';
+    const txnField = document.getElementById('txn-field');
+    const txnInput = document.getElementById('mun-txn');
+    const lbl = txnField.querySelector('label');
+    if (m === 'later') {
+      txnField.style.display = 'none';
+      txnInput.value = '';
+    } else {
+      txnField.style.display = 'block';
+      lbl.textContent = m === 'momo' ? 'MTN transaction ID *' : 'Bank reference number *';
+      txnInput.placeholder = m === 'momo' ? 'e.g. GH241207XXXXXXXX' : 'e.g. bank ref number';
+    }
+    // Update amounts
+    const amt = document.getElementById('fee-full').classList.contains('selected') ? 'GHS 500' : 'GHS 250';
+    document.getElementById('momo-amount').textContent = amt;
+    document.getElementById('bank-amount').textContent = amt;
   }
 
   async function postToSheet(data) {
@@ -752,7 +774,7 @@
     const email   = document.getElementById('ylc-email').value.trim();
     const phone   = document.getElementById('ylc-phone').value.trim();
     const country = document.getElementById('ylc-country').value.trim();
-    const checks  = ['c1','c2','c3','c4'].every(id => document.getElementById(id).checked);
+    const checks  = ['c1','c2','c3'].every(id => document.getElementById(id).checked);
     if (!name || !email) { showError('ylc-error','Please enter your name and email address.'); return; }
     if (!checks) { showError('ylc-error','Please confirm all four statements before submitting.'); return; }
     const btn = document.getElementById('ylc-btn');
@@ -777,18 +799,21 @@
     const txn     = document.getElementById('mun-txn').value.trim();
     const notes   = document.getElementById('mun-notes').value.trim();
     const plan    = document.getElementById('fee-full').classList.contains('selected') ? 'Full — GHS 500' : 'Part — GHS 250';
-    const method  = document.getElementById('pm-momo').classList.contains('selected') ? 'Mobile Money' : 'Bank Transfer';
-    if (!name || !email || !txn) { showError('mun-error','Please fill in your name, email, and transaction ID.'); return; }
+    const isLater = document.getElementById('pm-later').classList.contains('selected');
+    const isMomo  = document.getElementById('pm-momo').classList.contains('selected');
+    const method  = isLater ? 'Book & Pay Later' : isMomo ? 'MTN Mobile Money' : 'Bank Transfer';
+    if (!name || !email) { showError('mun-error','Please fill in your name and email address.'); return; }
+    if (!isLater && !txn) { showError('mun-error', isMomo ? 'Please enter your MTN transaction ID.' : 'Please enter your bank reference number.'); return; }
     const btn = document.getElementById('mun-btn');
     btn.disabled = true; btn.textContent = 'Submitting…';
     try {
-      await postToSheet({ sheet:'MUN_Payments', timestamp:new Date().toISOString(), name, email, phone, country, payment_plan:plan, payment_method:method, transaction_id:txn, notes });
+      await postToSheet({ sheet:'MUN_Payments', timestamp:new Date().toISOString(), name, email, phone, country, payment_plan:plan, payment_method:method, transaction_id: isLater ? 'Book & Pay Later' : txn, notes });
       document.getElementById('mun-success').style.display = 'block';
       document.getElementById('mun-success').scrollIntoView({ behavior:'smooth', block:'nearest' });
-      btn.textContent = 'Payment submitted ✓';
+      btn.textContent = isLater ? 'Booking received ✓' : 'Payment submitted ✓';
       document.getElementById('mun-error').style.display = 'none';
     } catch(e) {
-      btn.disabled = false; btn.textContent = 'Submit payment confirmation →';
+      btn.disabled = false; btn.textContent = 'Submit →';
       showError('mun-error','Something went wrong. Please try again or email cohortyouthleadership@gmail.com.');
     }
   }
@@ -799,5 +824,53 @@
     el.scrollIntoView({ behavior:'smooth', block:'nearest' });
   }
 </script>
+
+<!--
+════════════════════════════════════════════════
+  GOOGLE SHEETS SETUP GUIDE
+════════════════════════════════════════════════
+
+STEP 1 — Create the Google Sheet
+  1. Go to sheets.google.com → new spreadsheet.
+  2. Name first sheet tab:   YLC_Registration
+  3. Add second sheet tab:   MUN_Payments
+  4. YLC_Registration headers (row 1):
+     Timestamp | Name | Email | Phone | Country | Confirmed Offer | Confirmed MUN | Confirmed Dress Code | Confirmed Free
+  5. MUN_Payments headers (row 1):
+     Timestamp | Name | Email | Phone | Country | Payment Plan | Payment Method | Transaction ID | Notes
+
+STEP 2 — Apps Script
+  Extensions → Apps Script → paste this:
+
+function doPost(e) {
+  try {
+    var data = JSON.parse(e.postData.contents);
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(data.sheet);
+    if (!sheet) return ContentService.createTextOutput('{"status":"error"}').setMimeType(ContentService.MimeType.JSON);
+    if (data.sheet === 'YLC_Registration') {
+      sheet.appendRow([data.timestamp,data.name,data.email,data.phone,data.country,data.confirmed_offer,data.confirmed_mun,data.confirmed_dresscode,data.confirmed_free]);
+    } else if (data.sheet === 'MUN_Payments') {
+      sheet.appendRow([data.timestamp,data.name,data.email,data.phone,data.country,data.payment_plan,data.payment_method,data.transaction_id,data.notes]);
+    }
+    return ContentService.createTextOutput('{"status":"ok"}').setMimeType(ContentService.MimeType.JSON);
+  } catch(err) {
+    return ContentService.createTextOutput('{"status":"error","message":"'+err+'"}').setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+STEP 3 — Deploy
+  Deploy → New deployment → Web app
+  Execute as: Me | Who has access: Anyone
+  Copy the Web app URL.
+
+STEP 4 — Paste URL
+  In this file find:  const GOOGLE_SCRIPT_URL = 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE';
+  Replace with your URL.
+
+STEP 5 — Host free
+  Netlify: drag & drop at netlify.com → instant live URL
+  GitHub Pages: upload as index.html, enable Pages in Settings
+════════════════════════════════════════════════
+-->
 </body>
 </html>
