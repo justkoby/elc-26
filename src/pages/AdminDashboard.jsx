@@ -559,8 +559,7 @@ const AdminDashboard = () => {
           {/* Card 2: Pending */}
           <div style={{
             background: '#ffffff',
-            border: '1px solid #fef08a',
-            borderLeft: '4px solid #ca8a04',
+            border: '1px solid #d0e6f3',
             borderRadius: '12px',
             padding: '20px',
             boxShadow: '0 2px 8px rgba(0, 86, 138, 0.05)'
@@ -577,8 +576,7 @@ const AdminDashboard = () => {
           {/* Card 3: Awaiting Payment */}
           <div style={{
             background: '#ffffff',
-            border: '1px solid #bae6fd',
-            borderLeft: '4px solid #0284c7',
+            border: '1px solid #d0e6f3',
             borderRadius: '12px',
             padding: '20px',
             boxShadow: '0 2px 8px rgba(0, 86, 138, 0.05)'
@@ -595,8 +593,7 @@ const AdminDashboard = () => {
           {/* Card 4: Verified */}
           <div style={{
             background: '#ffffff',
-            border: '1px solid #a7f3d0',
-            borderLeft: '4px solid #059669',
+            border: '1px solid #d0e6f3',
             borderRadius: '12px',
             padding: '20px',
             boxShadow: '0 2px 8px rgba(0, 86, 138, 0.05)'
@@ -613,8 +610,7 @@ const AdminDashboard = () => {
           {/* Card 5: Rejected */}
           <div style={{
             background: '#ffffff',
-            border: '1px solid #fecaca',
-            borderLeft: '4px solid #dc2626',
+            border: '1px solid #d0e6f3',
             borderRadius: '12px',
             padding: '20px',
             boxShadow: '0 2px 8px rgba(0, 86, 138, 0.05)'
