@@ -3,100 +3,119 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>YLC-MUN 2026 — Registration & Payment Portal</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<title>YLC · Model UN General Assembly 2026 — Registration & Payment Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<!-- Supabase JS Client -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
   :root {
-    --un-dark:    #009EDB;
-    --un-deeper:  #007ab8;
-    --un-darkest: #00558a;
-    --un-tint:    #eaf6fc;
-    --un-tint2:   #c8e9f8;
-    --un-border:  #90cfe8;
-    --un-navy:    #013664;
-    --white:      #ffffff;
-    --text-dark:  #0d1f2d;
-    --text-mid:   #1c3f5e;
-    --text-muted: #4a6f8a;
-    --bg:         #f4f9fd;
-    --surface:    #ffffff;
-    --border:     #d0e6f3;
-    --gold:       #c8a84b;
-    --gold-tint:  #fdf6e3;
-    --gold-border:#e8d494;
-    --radius:     10px;
-    --shadow:     0 1px 3px rgba(0,86,138,0.08), 0 4px 16px rgba(0,86,138,0.06);
+    --un-blue: #009EDB;
+    --un-dark: #007AB8;
+    --un-navy: #013664;
+    --un-deeper: #002244;
+    --un-tint: #EBF7FC;
+    --un-tint2: #D6EFF9;
+    --un-border: #B3E0F2;
+    --gold: #C8A84B;
+    --gold-tint: #FAF6EB;
+    --gold-border: #E8D9AF;
+    --text-dark: #0D1F2D;
+    --text-mid: #3A5266;
+    --text-muted: #6B8296;
+    --bg: #F4F9FC;
+    --surface: #FFFFFF;
+    --border: #D0E6F3;
+    --radius: 10px;
+    --shadow: 0 4px 20px rgba(1,54,100,0.07);
+    --shadow-hover: 0 8px 30px rgba(1,54,100,0.13);
   }
 
+  * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: 'Inter', sans-serif;
     background: var(--bg);
     color: var(--text-dark);
-    min-height: 100vh;
     line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
   }
 
   /* Header */
   header {
     background: var(--un-navy);
+    border-bottom: 3px solid var(--un-blue);
+    padding: 16px 24px;
     position: sticky;
     top: 0;
     z-index: 100;
-    border-bottom: 3px solid var(--un-dark);
+    box-shadow: 0 2px 12px rgba(1,54,100,0.18);
   }
   .header-inner {
-    max-width: 820px;
+    max-width: 860px;
     margin: 0 auto;
-    padding: 13px 24px;
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 16px;
   }
   .logo-mark {
-    width: 38px;
-    height: 38px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
-    background: var(--un-dark);
+    background: var(--un-blue);
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
   }
-  .logo-mark svg { width: 22px; height: 22px; }
+  .logo-mark svg { width: 22px; height: 22px; fill: white; }
   .header-text h1 {
     font-family: 'Playfair Display', serif;
-    font-size: 16px;
+    font-size: 17px;
     font-weight: 600;
     color: #fff;
     line-height: 1.2;
   }
-  .header-text p { display: none; }
+  .header-text p {
+    font-size: 12px;
+    color: var(--un-tint2);
+    margin-top: 2px;
+  }
 
-  /* Progress bar */
+  /* Main Container */
+  .main {
+    max-width: 860px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 32px 20px 60px;
+    flex: 1;
+  }
+
+  /* Progress Tracker */
   .progress-bar {
-    background: rgba(255,255,255,0.1);
-    height: 3px;
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: rgba(255,255,255,0.2);
+    z-index: 101;
   }
   .progress-fill {
-    height: 3px;
-    background: var(--un-dark);
+    height: 100%;
+    background: var(--un-blue);
     width: 0%;
-    transition: width 0.4s ease;
+    transition: width 0.3s ease;
   }
 
-  /* Layout */
-  .main { max-width: 820px; margin: 0 auto; padding: 32px 24px 80px; }
-
-  /* Section divider */
+  /* Section Dividers */
   .section-divider {
     display: flex;
     align-items: center;
     gap: 14px;
-    margin: 40px 0 24px;
+    margin: 36px 0 20px;
   }
+  .section-divider:first-child { margin-top: 0; }
   .section-divider-line { flex: 1; height: 1px; background: var(--border); }
   .section-divider-label {
     display: flex;
@@ -248,253 +267,245 @@
   }
   .check-item:hover { border-color: var(--un-border); background: var(--un-tint); }
   .check-item.checked { border-color: var(--un-dark); background: var(--un-tint); }
-  .check-item input[type="checkbox"] {
-    width: 17px; height: 17px;
-    flex-shrink: 0; margin-top: 2px;
-    accent-color: var(--un-dark);
-    cursor: pointer;
-  }
-  .check-label { font-size: 14px; color: var(--text-dark); line-height: 1.5; }
-  .check-label small { display: block; font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .check-item input[type="checkbox"] { width: 16px; height: 16px; margin-top: 3px; accent-color: var(--un-dark); flex-shrink: 0; }
+  .check-label { font-size: 13px; font-weight: 500; color: var(--text-dark); }
+  .check-label small { display: block; font-size: 12px; color: var(--text-muted); font-weight: 400; margin-top: 2px; }
 
-  /* Package grid */
-  .pkg-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(155px, 1fr)); gap: 8px; }
+  /* Delegate Package Grid */
+  .pkg-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 10px; }
   .pkg-item {
     display: flex;
-    align-items: flex-start;
-    gap: 8px;
+    align-items: center;
+    gap: 10px;
     font-size: 13px;
     color: var(--text-mid);
-    background: var(--un-tint);
-    border: 1px solid var(--un-border);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 10px 14px;
     border-radius: var(--radius);
-    padding: 9px 12px;
-    line-height: 1.4;
   }
-  .pkg-item svg { width: 14px; height: 14px; color: var(--un-deeper); flex-shrink: 0; margin-top: 1px; }
+  .pkg-item svg { width: 15px; height: 15px; color: var(--un-dark); flex-shrink: 0; }
 
-  /* Fee cards */
-  .fee-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
-  @media (max-width: 440px) { .fee-grid { grid-template-columns: 1fr; } }
+  /* Fee Selector Cards */
+  .fee-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (max-width: 500px) { .fee-grid { grid-template-columns: 1fr; } }
   .fee-card {
     border: 2px solid var(--border);
-    border-radius: 12px;
-    padding: 16px 18px;
+    border-radius: var(--radius);
+    padding: 16px;
     cursor: pointer;
-    transition: all 0.15s;
+    transition: all 0.2s ease;
     background: var(--surface);
+    position: relative;
   }
-  .fee-card:hover { border-color: var(--un-border); background: var(--un-tint); }
-  .fee-card.selected { border-color: var(--un-dark); background: var(--un-tint); }
-  .fee-card .tag { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-muted); margin-bottom: 6px; }
-  .fee-card.selected .tag { color: var(--un-deeper); }
-  .fee-card .amount { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 600; color: var(--un-navy); }
-  .fee-card .sub { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+  .fee-card:hover { border-color: var(--un-border); transform: translateY(-1px); }
+  .fee-card.selected { border-color: var(--un-dark); background: var(--un-tint); box-shadow: 0 0 0 1px var(--un-dark); }
+  .fee-card .tag { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--un-dark); margin-bottom: 4px; }
+  .fee-card .amount { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 700; color: var(--un-navy); }
+  .fee-card .sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
 
-  /* Deadline alert */
-  .deadline-note {
-    display: none;
-    align-items: flex-start;
-    gap: 9px;
+  /* Payment Methods */
+  .pay-methods { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
+  @media (max-width: 540px) { .pay-methods { grid-template-columns: 1fr; } }
+  .pay-method {
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: var(--surface);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-mid);
+  }
+  .pay-method:hover { border-color: var(--un-border); }
+  .pay-method.selected { border-color: var(--un-dark); background: var(--un-tint); color: var(--un-deeper); font-weight: 700; }
+  .pay-method .method-icon { margin-bottom: 6px; }
+  .pay-method .method-icon svg { width: 22px; height: 22px; color: var(--un-dark); }
+
+  /* Payment Detail Boxes */
+  .pay-detail {
+    background: var(--un-tint);
+    border: 1px solid var(--un-border);
+    border-left: 4px solid var(--un-dark);
+    border-radius: var(--radius);
+    padding: 16px 18px;
     font-size: 13px;
-    color: #7a5500;
+    color: var(--un-deeper);
+    margin-top: 14px;
+    line-height: 1.7;
+  }
+  .pay-detail .acct { font-family: 'JetBrains Mono', monospace; font-weight: 600; background: rgba(0,122,184,0.1); padding: 2px 6px; border-radius: 4px; color: var(--un-navy); }
+  .pay-detail .amount-due { font-weight: 700; color: var(--un-navy); }
+
+  /* Deadline Alert */
+  .deadline-note {
     background: var(--gold-tint);
     border: 1px solid var(--gold-border);
     border-radius: var(--radius);
-    padding: 10px 14px;
-    margin-bottom: 14px;
-    line-height: 1.5;
-  }
-  .deadline-note svg { width: 14px; height: 14px; flex-shrink: 0; margin-top: 1px; }
-
-  /* Payment methods */
-  .pay-methods { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
-  .pay-method {
-    display: flex;
+    padding: 12px 16px;
+    font-size: 12px;
+    color: #5C4813;
+    display: none;
     align-items: center;
-    gap: 12px;
-    padding: 11px 16px;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--text-mid);
-    background: var(--surface);
-    transition: all 0.15s;
+    gap: 10px;
+    margin-top: 12px;
   }
-  .pay-method:hover { border-color: var(--un-border); background: var(--un-tint); }
-  .pay-method.selected { border-color: var(--un-dark); background: var(--un-tint); color: var(--un-navy); }
-  .method-icon {
-    width: 34px; height: 34px;
-    border-radius: 8px;
-    background: var(--un-tint2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-  }
-  .method-icon svg { width: 17px; height: 17px; color: var(--un-deeper); }
+  .deadline-note svg { width: 16px; height: 16px; color: var(--gold); flex-shrink: 0; }
 
-  /* Pay detail box */
-  .pay-detail {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-left: 3px solid var(--un-dark);
-    border-radius: var(--radius);
-    padding: 14px 16px;
-    font-size: 13px;
-    color: var(--text-mid);
-    line-height: 2;
-    margin-bottom: 16px;
-  }
-  .pay-detail strong { color: var(--text-dark); font-weight: 600; }
-  .pay-detail .acct {
-    font-family: 'Courier New', monospace;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--un-navy);
-    background: var(--un-tint2);
-    padding: 1px 6px;
-    border-radius: 4px;
-  }
-  .pay-detail .amount-due { font-size: 16px; font-weight: 600; color: var(--un-deeper); }
-
-  /* Submit button */
+  /* Buttons */
   .submit-btn {
     width: 100%;
-    padding: 14px;
+    padding: 14px 24px;
     font-family: 'Inter', sans-serif;
     font-size: 15px;
     font-weight: 600;
-    background: var(--un-dark);
     color: #fff;
+    background: var(--un-dark);
     border: none;
-    border-radius: 10px;
+    border-radius: var(--radius);
     cursor: pointer;
-    transition: background 0.15s, transform 0.1s;
-    margin-top: 4px;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 14px rgba(0,122,184,0.25);
+    margin-top: 8px;
   }
-  .submit-btn:hover { background: var(--un-darkest); }
-  .submit-btn:active { transform: scale(0.99); }
-  .submit-btn:disabled { background: #90b8cc; cursor: not-allowed; transform: none; }
+  .submit-btn:hover { background: var(--un-navy); transform: translateY(-1px); boxShadow: 0 6px 18px rgba(1,54,100,0.3); }
+  .submit-btn:disabled { background: var(--text-muted); cursor: not-allowed; transform: none; box-shadow: none; }
 
-  /* Success Card */
-  .success-card {
-    display: none;
-    background: var(--surface);
-    border: 2px solid var(--un-border);
-    border-radius: 16px;
-    padding: 36px 28px;
-    text-align: center;
-    margin: 20px 0;
-    box-shadow: 0 10px 30px rgba(0,158,219,0.12);
+  .secondary-btn {
+    background: #ffffff;
+    border: 1.5px solid var(--un-blue);
+    color: var(--un-dark);
+    box-shadow: none;
   }
-  .success-icon-wrap {
-    width: 64px; height: 64px;
-    border-radius: 50%;
+  .secondary-btn:hover {
     background: var(--un-tint);
-    border: 2px solid var(--un-dark);
+    color: var(--un-navy);
+  }
+
+  .error-msg {
+    background: #FDF2F2;
+    border: 1px solid #F87171;
+    color: #991B1B;
+    font-size: 13px;
+    padding: 12px 16px;
+    border-radius: var(--radius);
+    margin-bottom: 14px;
+    display: none;
+  }
+
+  /* Polished Success Card */
+  .success-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 40px 32px;
+    text-align: center;
+    box-shadow: var(--shadow-hover);
+    display: none;
+    animation: fadeIn 0.4s ease-out;
+  }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+  .success-icon-wrap {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: #ECFDF5;
+    border: 2px solid #A7F3D0;
+    color: #059669;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto 18px;
+    margin: 0 auto 20px;
   }
-  .success-icon-wrap svg { width: 32px; height: 32px; color: var(--un-dark); }
+  .success-icon-wrap svg { width: 32px; height: 32px; }
+
   .success-card h2 {
     font-family: 'Playfair Display', serif;
     font-size: 24px;
+    font-weight: 700;
     color: var(--un-navy);
     margin-bottom: 8px;
   }
-  .success-sub { font-size: 15px; color: var(--text-mid); max-width: 480px; margin: 0 auto 24px; }
+  .success-sub {
+    font-size: 14px;
+    color: var(--text-mid);
+    margin-bottom: 24px;
+  }
+
   .ref-box {
-    background: var(--un-navy);
-    border: 1px solid var(--un-dark);
+    background: var(--un-tint);
+    border: 1px dashed var(--un-dark);
     border-radius: 12px;
     padding: 20px;
-    margin: 0 auto 20px;
     max-width: 440px;
-    color: #fff;
+    margin: 0 auto 24px;
   }
-  .ref-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--un-tint2); margin-bottom: 6px; }
-  .ref-value {
-    font-family: 'Courier New', monospace;
-    font-size: 26px;
+  .ref-label {
+    font-size: 11px;
     font-weight: 700;
     letter-spacing: 0.08em;
-    color: var(--gold);
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+  .ref-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--un-navy);
+    letter-spacing: 0.04em;
     margin-bottom: 12px;
   }
   .copy-btn {
-    background: rgba(255,255,255,0.15);
-    border: 1px solid rgba(255,255,255,0.3);
-    color: #fff;
-    font-size: 12px;
-    font-weight: 600;
-    padding: 6px 16px;
-    border-radius: 20px;
-    cursor: pointer;
-    transition: all 0.15s;
     display: inline-flex;
     align-items: center;
     gap: 6px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--un-dark);
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
   }
-  .copy-btn:hover { background: rgba(255,255,255,0.25); }
+  .copy-btn:hover { border-color: var(--un-dark); background: #fff; }
+
   .status-info-box {
-    font-size: 14px;
-    padding: 12px 18px;
+    background: #F0F9FF;
+    border: 1px solid #BAE6FD;
+    color: #0369A1;
     border-radius: 10px;
+    padding: 14px 18px;
+    font-size: 13px;
+    font-weight: 500;
     max-width: 500px;
-    margin: 0 auto 16px;
+    margin: 0 auto 20px;
     line-height: 1.5;
   }
   .status-info-box.pending {
-    background: #fef9c3;
-    border: 1px solid #fde047;
-    color: #854d0e;
-  }
-  .status-info-box.awaiting {
-    background: #e0f2fe;
-    border: 1px solid #7dd3fc;
-    color: #0369a1;
+    background: #FEFCE8;
+    border-color: #FEF08A;
+    color: #854D0E;
   }
   .save-ref-note {
-    font-size: 13px;
-    color: var(--text-muted);
-    margin-top: 12px;
-  }
-
-  /* Error msg */
-  .error-msg {
-    display: none;
-    background: #fef2f2;
-    border: 1px solid #fca5a5;
-    border-radius: var(--radius);
-    padding: 12px 16px;
-    font-size: 13px;
-    color: #991b1b;
-    margin-bottom: 14px;
-    line-height: 1.5;
-  }
-
-  /* Footer */
-  footer {
-    text-align: center;
     font-size: 12px;
     color: var(--text-muted);
-    padding: 24px;
-    border-top: 1px solid var(--border);
-    margin-top: 40px;
   }
-  footer a { color: var(--un-deeper); text-decoration: none; }
 
-  @media (max-width: 600px) {
-    .main { padding: 20px 16px 48px; }
-    .hero { padding: 22px 18px 20px; }
-    .hero h2 { font-size: 21px; }
-    .card { padding: 16px; }
+  footer {
+    text-align: center;
+    padding: 24px 20px;
+    font-size: 12px;
+    color: var(--text-muted);
+    border-top: 1px solid var(--border);
+    margin-top: auto;
   }
+  footer a { color: var(--un-dark); text-decoration: none; }
 </style>
 </head>
 <body>
@@ -525,7 +536,7 @@
     <!-- ══════════════════════════════
          SECTION 1 — YLC REGISTRATION
     ══════════════════════════════ -->
-    <div class="section-divider">
+    <div class="section-divider" id="sec1-divider">
       <div class="section-number">1</div>
       <div class="section-divider-label">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/><polyline points="16 11 18 13 22 9"/></svg>
@@ -601,12 +612,17 @@
           </span>
         </label>
       </div>
+
+      <!-- Section 1 CTA Button -->
+      <button type="button" class="submit-btn" id="sec1-cta-btn" onclick="goToSection2()" style="margin-top: 20px;">
+        Proceed to Delegate Payment →
+      </button>
     </div>
 
     <!-- ══════════════════════════════
          SECTION 2 — MUN GA PAYMENT
     ══════════════════════════════ -->
-    <div class="section-divider">
+    <div class="section-divider" id="sec2-divider">
       <div class="section-number">2</div>
       <div class="section-divider-label">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
@@ -705,9 +721,12 @@
       <div class="pay-detail" id="detail-momo">
         <strong>MTN Mobile Money</strong><br>
         Number: <span class="acct">0538823965</span><br>
-        Account name: <span class="acct">Youth Diplomacy / Umar Faruk</span><br><br>
+        Account name: <span class="acct">Youth Diplomacy / Brakut Consult / Umar Faruk</span><br><br>
         Amount to send: <span class="amount-due" id="momo-amount">GHS 500</span><br>
-        After sending, enter your <strong>MTN transaction ID</strong> in the form below.
+        After sending, click below to enter your <strong>MTN transaction ID</strong> and submit your confirmation.<br><br>
+        <button type="button" class="submit-btn" style="padding: 10px 16px; font-size: 13px;" onclick="revealSubmitSection('momo')">
+          I have made payment → Enter Transaction Reference
+        </button>
       </div>
 
       <div class="pay-detail" id="detail-bank" style="display:none;">
@@ -716,41 +735,63 @@
         <strong>Account number:</strong> <span class="acct">12210101811928202</span><br>
         <strong>Branch:</strong> Legon<br><br>
         Amount to transfer: <span class="amount-due" id="bank-amount">GHS 500</span><br>
-        After transferring, enter your <strong>bank reference number</strong> in the form below.
+        After transferring, click below to enter your <strong>bank reference number</strong> and submit your confirmation.<br><br>
+        <button type="button" class="submit-btn" style="padding: 10px 16px; font-size: 13px;" onclick="revealSubmitSection('bank')">
+          I have made payment → Enter Reference Number
+        </button>
       </div>
 
       <div class="pay-detail" id="detail-later" style="display:none; border-left-color: var(--gold);">
         <strong>Book Now, Pay Later</strong><br><br>
         After submitting this form, the <strong>YLC team will contact you</strong> with payment instructions to complete your registration.<br><br>
-        ⚠️ Your delegate place is <strong>not confirmed</strong> until payment is received before <strong>7 August 2026</strong>.
+        ⚠️ Your delegate place is <strong>not confirmed</strong> until payment is received before <strong>7 August 2026</strong>.<br><br>
+        <button type="button" class="submit-btn" style="padding: 10px 16px; font-size: 13px;" onclick="revealSubmitSection('later')">
+          Proceed to Submit Registration →
+        </button>
       </div>
     </div>
 
-    <div class="card">
-      <div class="card-title">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-        Submit registration & confirmation
+    <!-- ══════════════════════════════
+         SECTION 3 — SUBMIT REGISTRATION & CONFIRMATION
+         (Hidden until user completes payment or selects Pay Later)
+    ══════════════════════════════ -->
+    <div id="section-3-container" style="display: none;">
+      <div class="section-divider" id="sec3-divider">
+        <div class="section-number">3</div>
+        <div class="section-divider-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+          Complete Submission
+        </div>
+        <div class="section-divider-line"></div>
       </div>
-      <div class="form-row">
-        <div class="field"><label for="mun-name">Full name *</label><input type="text" id="mun-name" placeholder="As on your application" oninput="syncFields('name', this.value)"></div>
-        <div class="field"><label for="mun-email">Email address *</label><input type="email" id="mun-email" placeholder="name@example.com" oninput="syncFields('email', this.value)"></div>
+
+      <div class="card">
+        <div class="card-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Submit registration & confirmation
+        </div>
+        <div class="form-row">
+          <div class="field"><label for="mun-name">Full name *</label><input type="text" id="mun-name" placeholder="As on your application" oninput="syncFields('name', this.value)"></div>
+          <div class="field"><label for="mun-email">Email address *</label><input type="email" id="mun-email" placeholder="name@example.com" oninput="syncFields('email', this.value)"></div>
+        </div>
+        <div class="form-row">
+          <div class="field"><label for="mun-phone">Phone number</label><input type="tel" id="mun-phone" placeholder="+233 ..." oninput="syncFields('phone', this.value)"></div>
+          <div class="field"><label for="mun-country">Country</label><input type="text" id="mun-country" placeholder="e.g. Ghana" oninput="syncFields('country', this.value)"></div>
+        </div>
+        <div class="field" id="txn-field">
+          <label for="mun-txn" id="txn-label">MTN transaction ID *</label>
+          <input type="text" id="mun-txn" placeholder="e.g. GH241207XXXXXXXX">
+        </div>
+        <div class="field">
+          <label for="mun-notes">Additional notes (optional)</label>
+          <textarea id="mun-notes" placeholder="e.g. paid via MTN MoMo, part payment reference, etc."></textarea>
+        </div>
       </div>
-      <div class="form-row">
-        <div class="field"><label for="mun-phone">Phone number</label><input type="tel" id="mun-phone" placeholder="+233 ..." oninput="syncFields('phone', this.value)"></div>
-        <div class="field"><label for="mun-country">Country</label><input type="text" id="mun-country" placeholder="e.g. Ghana" oninput="syncFields('country', this.value)"></div>
-      </div>
-      <div class="field" id="txn-field">
-        <label for="mun-txn" id="txn-label">MTN transaction ID *</label>
-        <input type="text" id="mun-txn" placeholder="e.g. GH241207XXXXXXXX">
-      </div>
-      <div class="field">
-        <label for="mun-notes">Additional notes (optional)</label>
-        <textarea id="mun-notes" placeholder="e.g. paid via MTN MoMo, part payment reference, etc."></textarea>
-      </div>
+
+      <div class="error-msg" id="form-error"></div>
+      <button class="submit-btn" id="submit-btn" onclick="handleRegistrationSubmit()">Submit registration & payment confirmation →</button>
     </div>
 
-    <div class="error-msg" id="form-error"></div>
-    <button class="submit-btn" id="submit-btn" onclick="handleRegistrationSubmit()">Submit registration & payment confirmation →</button>
   </div>
 
   <!-- Polished Success Card -->
@@ -818,6 +859,35 @@
     }
   }
 
+  function goToSection2() {
+    const errorEl = document.getElementById('form-error');
+    errorEl.style.display = 'none';
+
+    const name = document.getElementById('ylc-name').value.trim();
+    const email = document.getElementById('ylc-email').value.trim();
+    const c1 = document.getElementById('c1').checked;
+    const c2 = document.getElementById('c2').checked;
+    const c3 = document.getElementById('c3').checked;
+
+    if (!name) {
+      showError('Please enter your full name before proceeding.');
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email || !emailRegex.test(email)) {
+      showError('Please enter a valid email address before proceeding.');
+      return;
+    }
+
+    if (!c1 || !c2 || !c3) {
+      showError('Please confirm all three statements (Offer Admission, MUN GA Attendance, and Dress Code) to proceed.');
+      return;
+    }
+
+    document.getElementById('sec2-divider').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
   function selectFee(type) {
     document.getElementById('fee-full').classList.toggle('selected', type === 'full');
     document.getElementById('fee-part').classList.toggle('selected', type === 'part');
@@ -854,6 +924,14 @@
       lbl.textContent = 'MTN transaction ID *';
       txnInput.placeholder = 'e.g. GH241207XXXXXXXX';
     }
+
+    revealSubmitSection(m);
+  }
+
+  function revealSubmitSection(m) {
+    const sec3 = document.getElementById('section-3-container');
+    sec3.style.display = 'block';
+    sec3.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
 
   async function handleRegistrationSubmit() {
