@@ -124,6 +124,15 @@ const AdminDashboard = () => {
     const pSel = Array.isArray(app.payment_selections) ? app.payment_selections[0] : app.payment_selections;
     const pConf = Array.isArray(app.payment_confirmations) ? app.payment_confirmations[0] : app.payment_confirmations;
 
+    const isFreeRegistration = 
+      app.program_type === 'Youth Leadership Cohort (Free)' ||
+      app.applicant_reference?.startsWith('YLC-FREE') ||
+      app.payment_status === 'Free' ||
+      pSel?.payment_method === 'Free Registration' ||
+      pConf?.payment_method === 'Free Registration';
+
+    const programType = app.program_type || (isFreeRegistration ? 'Youth Leadership Cohort (Free)' : 'MUN General Assembly (Paid)');
+
     return {
       id: app.id,
       ref: app.applicant_reference || `YLC-${app.id?.substring(0, 8)}`,
@@ -131,15 +140,17 @@ const AdminDashboard = () => {
       email: app.email || 'N/A',
       phone: app.phone || 'N/A',
       country: app.country || 'N/A',
+      programType,
+      isFreeRegistration,
       admissionAccepted: app.admission_accepted ?? true,
       munAttendanceConfirmed: app.mun_attendance_confirmed ?? true,
       dressCodeAcknowledged: app.dress_code_acknowledged ?? true,
       hasPayment: Boolean(pSel || pConf),
-      method: pSel?.payment_method || pConf?.payment_method || 'N/A',
-      amount: pSel?.amount ? `GHS ${pSel.amount}` : 'GHS 500',
-      txnRef: pConf?.transaction_reference || 'None',
-      notes: pConf?.additional_notes || '',
-      status: pConf?.payment_status || app.payment_status || 'Pending',
+      method: isFreeRegistration ? 'Free Registration' : (pSel?.payment_method || pConf?.payment_method || 'N/A'),
+      amount: isFreeRegistration ? 'Free' : (pSel?.amount ? `GHS ${pSel.amount}` : 'GHS 500'),
+      txnRef: pConf?.transaction_reference || (isFreeRegistration ? 'YLC-FREE' : 'None'),
+      notes: pConf?.additional_notes || app.additional_notes || '',
+      status: isFreeRegistration ? 'Free' : (pConf?.payment_status || app.payment_status || 'Pending'),
       createdAt: app.created_at || pConf?.created_at || new Date().toISOString(),
       verifiedAt: pConf?.verified_at || null,
       confirmationId: pConf?.id || null
@@ -155,10 +166,10 @@ const AdminDashboard = () => {
   const filteredApplicants = useMemo(() => {
     return processedApplicants.filter((app) => {
       // Tab filter
-      if (activeTab === 'SECTION1' && (!app.admissionAccepted && !app.munAttendanceConfirmed)) {
+      if (activeTab === 'SECTION1' && !app.isFreeRegistration && !app.programType?.toLowerCase().includes('free')) {
         return false;
       }
-      if (activeTab === 'SECTION2' && (app.method === 'N/A' && app.status === 'Pending' && !app.hasPayment)) {
+      if (activeTab === 'SECTION2' && (app.isFreeRegistration || app.programType?.toLowerCase().includes('free'))) {
         return false;
       }
 
@@ -327,7 +338,7 @@ const AdminDashboard = () => {
 
   const getStatusBadgeStyle = (status) => {
     const st = (status || '').toLowerCase();
-    if (st === 'verified') {
+    if (st === 'verified' || st === 'free') {
       return { bg: '#ecfdf5', border: '#a7f3d0', color: '#047857', icon: <CheckCircle2 size={13} /> };
     }
     if (st === 'pending') {
@@ -893,8 +904,41 @@ const AdminDashboard = () => {
                       const badge = getStatusBadgeStyle(app.status);
                       return (
                         <tr key={app.id} style={{ borderBottom: '1px solid #eaf6fc', transition: 'background 0.15s' }}>
-                          <td style={{ padding: '14px 16px', fontFamily: "'Courier New', monospace", fontWeight: 700, color: '#013664' }}>
-                            {app.ref}
+                          <td style={{ padding: '14px 16px' }}>
+                            <div style={{ fontFamily: "'Courier New', monospace", fontWeight: 700, color: '#013664' }}>
+                              {app.ref}
+                            </div>
+                            <div style={{ marginTop: '4px' }}>
+                              {app.isFreeRegistration ? (
+                                <span style={{
+                                  fontSize: '10px',
+                                  fontWeight: 700,
+                                  textTransform: 'uppercase',
+                                  letterSpacing: '0.04em',
+                                  padding: '2px 7px',
+                                  borderRadius: '12px',
+                                  background: '#ecfdf5',
+                                  color: '#047857',
+                                  border: '1px solid #a7f3d0'
+                                }}>
+                                  YLC Free
+                                </span>
+                              ) : (
+                                <span style={{
+                                  fontSize: '10px',
+                                  fontWeight: 700,
+                                  textTransform: 'uppercase',
+                                  letterSpacing: '0.04em',
+                                  padding: '2px 7px',
+                                  borderRadius: '12px',
+                                  background: '#FAF6EB',
+                                  color: '#9E7D23',
+                                  border: '1px solid #E8D9AF'
+                                }}>
+                                  MUN GA Paid
+                                </span>
+                              )}
+                            </div>
                           </td>
                           <td style={{ padding: '14px 16px' }}>
                             <div style={{ fontWeight: 600, color: '#0d1f2d' }}>{app.name}</div>

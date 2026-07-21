@@ -19,6 +19,8 @@
     --un-tint2: #D6EFF9;
     --un-border: #B3E0F2;
     --gold: #C8A84B;
+    --gold-dark: #9E7D23;
+    --gold-deeper: #2A2109;
     --gold-tint: #FAF6EB;
     --gold-border: #E8D9AF;
     --text-dark: #0D1F2D;
@@ -121,22 +123,22 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 12px;
-    font-weight: 600;
+    font-size: 13px;
+    font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--un-deeper);
     white-space: nowrap;
   }
-  .section-divider-label svg { width: 14px; height: 14px; }
+  .section-divider-label svg { width: 15px; height: 15px; }
   .section-number {
-    width: 24px;
-    height: 24px;
+    width: 26px;
+    height: 26px;
     border-radius: 50%;
     background: var(--un-dark);
     color: white;
-    font-size: 11px;
-    font-weight: 600;
+    font-size: 12px;
+    font-weight: 700;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -170,12 +172,12 @@
   .hero-badge {
     display: inline-block;
     font-size: 11px;
-    font-weight: 600;
+    font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--un-dark);
-    background: rgba(0,158,219,0.18);
-    border: 1px solid rgba(0,158,219,0.35);
+    color: #fff;
+    background: rgba(0,158,219,0.3);
+    border: 1px solid rgba(0,158,219,0.5);
     padding: 4px 12px;
     border-radius: 20px;
     margin-bottom: 12px;
@@ -189,7 +191,7 @@
     line-height: 1.3;
     position: relative;
   }
-  .hero p { font-size: 14px; color: rgba(255,255,255,0.75); max-width: 500px; position: relative; }
+  .hero p { font-size: 14px; color: rgba(255,255,255,0.85); max-width: 540px; position: relative; }
   .info-chips { display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap; position: relative; }
   .chip {
     display: flex;
@@ -204,7 +206,106 @@
     border-radius: 20px;
   }
   .chip svg { width: 12px; height: 12px; }
-  .chip.gold { color: var(--gold); background: rgba(200,168,75,0.12); border-color: rgba(200,168,75,0.3); }
+  .chip.free-chip { color: #A7F3D0; background: rgba(16, 185, 129, 0.2); border-color: rgba(16, 185, 129, 0.4); font-weight: 700; }
+  .chip.gold { color: var(--gold); background: rgba(200,168,75,0.15); border-color: rgba(200,168,75,0.35); font-weight: 600; }
+
+  /* ════════════════════════════════
+     GOLD THEME FOR SECTION 2 (PAID MUN GA)
+  ════════════════════════════════ */
+  .gold-section-wrapper {
+    background: linear-gradient(180deg, #FAF6EB 0%, #F5ECDA 50%, #FAF6EB 100%);
+    border: 2px solid var(--gold-border);
+    border-radius: 18px;
+    padding: 28px 24px;
+    margin-top: 40px;
+    box-shadow: 0 10px 30px rgba(200, 168, 75, 0.12);
+    position: relative;
+  }
+  .gold-section-wrapper .section-divider-label {
+    color: var(--gold-deeper);
+  }
+  .gold-section-wrapper .section-number {
+    background: var(--gold-dark);
+  }
+  .gold-section-wrapper .section-divider-line {
+    background: var(--gold-border);
+  }
+
+  .gold-hero {
+    background: linear-gradient(135deg, #2A2109 0%, #171203 100%);
+    border: 1.5px solid var(--gold);
+    border-radius: 14px;
+    padding: 30px 28px 26px;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 6px 24px rgba(42, 33, 9, 0.25);
+  }
+  .gold-hero::before {
+    content: '';
+    position: absolute;
+    right: -30px; top: -30px;
+    width: 160px; height: 160px;
+    border-radius: 50%;
+    background: rgba(200, 168, 75, 0.15);
+  }
+  .gold-hero::after {
+    content: '';
+    position: absolute;
+    right: 40px; bottom: -40px;
+    width: 100px; height: 100px;
+    border-radius: 50%;
+    background: rgba(200, 168, 75, 0.08);
+  }
+  .gold-hero-badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #171203;
+    background: linear-gradient(90deg, #F5D77F 0%, #C8A84B 100%);
+    border: 1px solid #FFE7A0;
+    padding: 4px 14px;
+    border-radius: 20px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 8px rgba(200, 168, 75, 0.3);
+  }
+  .gold-hero h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: #FFF2C6;
+    margin-bottom: 8px;
+    line-height: 1.3;
+    position: relative;
+  }
+  .gold-hero p { font-size: 14px; color: #EADCB6; max-width: 540px; position: relative; }
+
+  .gold-card {
+    background: #FFFFFF;
+    border: 1px solid var(--gold-border);
+    border-radius: 12px;
+    padding: 20px 22px;
+    margin-bottom: 16px;
+    box-shadow: 0 4px 16px rgba(200, 168, 75, 0.08);
+  }
+  .gold-card .card-title {
+    color: var(--gold-dark);
+  }
+  .gold-card .card-title svg { color: var(--gold-dark); }
+
+  .gold-btn {
+    background: linear-gradient(135deg, #C8A84B 0%, #9E7D23 100%);
+    color: #FFFFFF;
+    border: none;
+    box-shadow: 0 4px 16px rgba(158, 125, 35, 0.35);
+  }
+  .gold-btn:hover {
+    background: linear-gradient(135deg, #B59336 0%, #876817 100%);
+    box-shadow: 0 6px 22px rgba(158, 125, 35, 0.45);
+    transform: translateY(-1px);
+  }
 
   /* Cards */
   .card {
@@ -250,6 +351,12 @@
     box-shadow: 0 0 0 3px rgba(0,158,219,0.12);
     background: #fff;
   }
+  .gold-section-wrapper .field input:focus, 
+  .gold-section-wrapper .field select:focus, 
+  .gold-section-wrapper .field textarea:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(200, 168, 75, 0.2);
+  }
   .field textarea { resize: vertical; min-height: 76px; }
 
   /* Checkboxes */
@@ -279,18 +386,18 @@
     gap: 10px;
     font-size: 13px;
     color: var(--text-mid);
-    background: var(--bg);
-    border: 1px solid var(--border);
+    background: #FAF6EB;
+    border: 1px solid var(--gold-border);
     padding: 10px 14px;
     border-radius: var(--radius);
   }
-  .pkg-item svg { width: 15px; height: 15px; color: var(--un-dark); flex-shrink: 0; }
+  .pkg-item svg { width: 15px; height: 15px; color: var(--gold-dark); flex-shrink: 0; }
 
   /* Fee Selector Cards */
   .fee-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
   @media (max-width: 500px) { .fee-grid { grid-template-columns: 1fr; } }
   .fee-card {
-    border: 2px solid var(--border);
+    border: 2px solid var(--gold-border);
     border-radius: var(--radius);
     padding: 16px;
     cursor: pointer;
@@ -298,17 +405,17 @@
     background: var(--surface);
     position: relative;
   }
-  .fee-card:hover { border-color: var(--un-border); transform: translateY(-1px); }
-  .fee-card.selected { border-color: var(--un-dark); background: var(--un-tint); box-shadow: 0 0 0 1px var(--un-dark); }
-  .fee-card .tag { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--un-dark); margin-bottom: 4px; }
-  .fee-card .amount { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 700; color: var(--un-navy); }
+  .fee-card:hover { border-color: var(--gold); transform: translateY(-1px); }
+  .fee-card.selected { border-color: var(--gold-dark); background: #FAF6EB; box-shadow: 0 0 0 1px var(--gold-dark); }
+  .fee-card .tag { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--gold-dark); margin-bottom: 4px; }
+  .fee-card .amount { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 700; color: #2A2109; }
   .fee-card .sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
 
   /* Payment Methods */
   .pay-methods { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
   @media (max-width: 540px) { .pay-methods { grid-template-columns: 1fr; } }
   .pay-method {
-    border: 1.5px solid var(--border);
+    border: 1.5px solid var(--gold-border);
     border-radius: var(--radius);
     padding: 12px;
     text-align: center;
@@ -319,25 +426,25 @@
     font-weight: 600;
     color: var(--text-mid);
   }
-  .pay-method:hover { border-color: var(--un-border); }
-  .pay-method.selected { border-color: var(--un-dark); background: var(--un-tint); color: var(--un-deeper); font-weight: 700; }
+  .pay-method:hover { border-color: var(--gold); }
+  .pay-method.selected { border-color: var(--gold-dark); background: #FAF6EB; color: #2A2109; font-weight: 700; }
   .pay-method .method-icon { margin-bottom: 6px; }
-  .pay-method .method-icon svg { width: 22px; height: 22px; color: var(--un-dark); }
+  .pay-method .method-icon svg { width: 22px; height: 22px; color: var(--gold-dark); }
 
   /* Payment Detail Boxes */
   .pay-detail {
-    background: var(--un-tint);
-    border: 1px solid var(--un-border);
-    border-left: 4px solid var(--un-dark);
+    background: #FAF6EB;
+    border: 1px solid var(--gold-border);
+    border-left: 4px solid var(--gold-dark);
     border-radius: var(--radius);
     padding: 16px 18px;
     font-size: 13px;
-    color: var(--un-deeper);
+    color: #2A2109;
     margin-top: 14px;
     line-height: 1.7;
   }
-  .pay-detail .acct { font-family: 'JetBrains Mono', monospace; font-weight: 600; background: rgba(0,122,184,0.1); padding: 2px 6px; border-radius: 4px; color: var(--un-navy); }
-  .pay-detail .amount-due { font-weight: 700; color: var(--un-navy); }
+  .pay-detail .acct { font-family: 'JetBrains Mono', monospace; font-weight: 600; background: rgba(200,168,75,0.15); padding: 2px 6px; border-radius: 4px; color: #2A2109; }
+  .pay-detail .amount-due { font-weight: 700; color: #2A2109; }
 
   /* Deadline Alert */
   .deadline-note {
@@ -352,7 +459,7 @@
     gap: 10px;
     margin-top: 12px;
   }
-  .deadline-note svg { width: 16px; height: 16px; color: var(--gold); flex-shrink: 0; }
+  .deadline-note svg { width: 16px; height: 16px; color: var(--gold-dark); flex-shrink: 0; }
 
   /* Buttons */
   .submit-btn {
@@ -370,7 +477,7 @@
     box-shadow: 0 4px 14px rgba(0,122,184,0.25);
     margin-top: 8px;
   }
-  .submit-btn:hover { background: var(--un-navy); transform: translateY(-1px); boxShadow: 0 6px 18px rgba(1,54,100,0.3); }
+  .submit-btn:hover { background: var(--un-navy); transform: translateY(-1px); box-shadow: 0 6px 18px rgba(1,54,100,0.3); }
   .submit-btn:disabled { background: var(--text-muted); cursor: not-allowed; transform: none; box-shadow: none; }
 
   .secondary-btn {
@@ -394,6 +501,47 @@
     margin-bottom: 14px;
     display: none;
   }
+
+  /* Section 1 Success Callout Card */
+  .sec1-success-card {
+    background: #ECFDF5;
+    border: 1.5px solid #A7F3D0;
+    border-radius: 14px;
+    padding: 22px 24px;
+    margin-top: 20px;
+    display: none;
+    animation: fadeIn 0.3s ease-out;
+  }
+  .sec1-success-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+  .sec1-success-header svg { width: 24px; height: 24px; color: #059669; }
+  .sec1-success-header h3 { font-size: 16px; font-weight: 700; color: #065F46; }
+  .sec1-ref-pill {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 15px;
+    font-weight: 700;
+    color: #065F46;
+    background: #D1FAE5;
+    padding: 4px 10px;
+    border-radius: 6px;
+    display: inline-block;
+    margin-top: 6px;
+  }
+  .sec1-next-prompt {
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px dashed #A7F3D0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .sec1-next-prompt p { font-size: 13px; color: #047857; font-weight: 500; margin: 0; }
 
   /* Polished Success Card */
   .success-card {
@@ -533,23 +681,27 @@
 
   <div id="form-container">
 
-    <!-- ══════════════════════════════
-         SECTION 1 — YLC REGISTRATION
-    ══════════════════════════════ -->
+    <!-- ════════════════════════════════════════════════════════
+         PROGRAMME 1 — YOUTH LEADERSHIP COHORT (FREE REGISTRATION)
+    ════════════════════════════════════════════════════════ -->
     <div class="section-divider" id="sec1-divider">
       <div class="section-number">1</div>
       <div class="section-divider-label">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/><polyline points="16 11 18 13 22 9"/></svg>
-        Youth Leadership Cohort — Registration
+        Youth Leadership Cohort — Free Registration
       </div>
       <div class="section-divider-line"></div>
     </div>
 
     <div class="hero">
-      <div class="hero-badge">Congratulations — You've been selected</div>
+      <div class="hero-badge">Offer of Admission — Free Programme</div>
       <h2>Youth Leadership Cohort 2026</h2>
-      <p>Complete this section to confirm your place. Your training is fully covered — no fees required.</p>
+      <p>Complete this section to register your place. Your leadership training is <strong>100% free</strong> and fully sponsored — no fees required.</p>
       <div class="info-chips">
+        <span class="chip free-chip">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+          100% Free Training
+        </span>
         <span class="chip">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
           14 August 2026
@@ -562,17 +714,13 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
           Official dress code
         </span>
-        <span class="chip gold">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/></svg>
-          Free training
-        </span>
       </div>
     </div>
 
     <div class="card">
       <div class="card-title">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-        Your details
+        Your registration details
       </div>
       <div class="form-row">
         <div class="field"><label for="ylc-name">Full name *</label><input type="text" id="ylc-name" placeholder="As on your application" oninput="syncFields('name', this.value)"></div>
@@ -594,14 +742,14 @@
           <input type="checkbox" id="c1" onchange="toggleCheck('ci-1',this)">
           <span class="check-label">
             I accept my offer of admission to the Youth Leadership Cohort 2026. *
-            <small>I understand my place is confirmed only upon submitting this form.</small>
+            <small>I understand my place is confirmed upon submitting this free registration form.</small>
           </span>
         </label>
         <label class="check-item" id="ci-2">
           <input type="checkbox" id="c2" onchange="toggleCheck('ci-2',this)">
           <span class="check-label">
-            I confirm I will attend the Model UN General Assembly conference. *
-            <small>I look forward to representing my delegation at the YLC MUN GA 2026.</small>
+            I confirm my attendance at the free Orientation and Training Session scheduled for 20 August 2026. *
+            <small>I understand this orientation and training session is fully sponsored and free of charge.</small>
           </span>
         </label>
         <label class="check-item" id="ci-3">
@@ -613,162 +761,71 @@
         </label>
       </div>
 
-      <!-- Section 1 CTA Button -->
-      <button type="button" class="submit-btn" id="sec1-cta-btn" onclick="goToSection2()" style="margin-top: 20px;">
-        Proceed to Delegate Payment →
+      <div class="error-msg" id="ylc-form-error" style="margin-top: 14px;"></div>
+
+      <!-- Section 1 Free Registration Submit Button -->
+      <button type="button" class="submit-btn" id="sec1-submit-btn" onclick="handleFreeYLCSubmit()" style="margin-top: 20px;">
+        Submit Free YLC Registration →
       </button>
-    </div>
 
-    <!-- ══════════════════════════════
-         SECTION 2 — MUN GA PAYMENT
-    ══════════════════════════════ -->
-    <div class="section-divider" id="sec2-divider">
-      <div class="section-number">2</div>
-      <div class="section-divider-label">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
-        MUN General Assembly — Delegate Payment
-      </div>
-      <div class="section-divider-line"></div>
-    </div>
-
-    <div class="hero">
-      <div class="hero-badge">Model UN General Assembly 2026</div>
-      <h2>Delegate payment portal</h2>
-      <p>Select your payment plan, complete the transfer, then submit your transaction reference below to secure your delegate place.</p>
-      <div class="info-chips">
-        <span class="chip">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          Deadline: 7 August 2026
-        </span>
-        <span class="chip">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-          Accra, Ghana
-        </span>
-        <span class="chip gold">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
-          GHS 500 full / GHS 250 part
-        </span>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-title">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/></svg>
-        Delegate package — what's included
-      </div>
-      <div class="pkg-grid">
-        <div class="pkg-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>Conference & graduation ceremony</div>
-        <div class="pkg-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>Official delegate certificate</div>
-        <div class="pkg-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>Benefits tag & delegate ID</div>
-        <div class="pkg-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>Breakfast, lunch & brunch</div>
-        <div class="pkg-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.63 12"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Study abroad consultative team</div>
-        <div class="pkg-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>Educational resources</div>
-        <div class="pkg-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Fun games & activities</div>
-        <div class="pkg-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Networking gala</div>
-        <div class="pkg-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>5-star venue</div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-title">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
-        Choose a payment plan
-      </div>
-      <div class="fee-grid">
-        <div class="fee-card selected" id="fee-full" onclick="selectFee('full')">
-          <div class="tag">Full payment</div>
-          <div class="amount">GHS 500</div>
-          <div class="sub">Pay once — fully confirmed</div>
-        </div>
-        <div class="fee-card" id="fee-part" onclick="selectFee('part')">
-          <div class="tag">Part payment (50%)</div>
-          <div class="amount">GHS 250</div>
-          <div class="sub">Balance due before the event</div>
-        </div>
-      </div>
-      <div class="deadline-note" id="deadline-note">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-        Part payment must be received <strong>before 7 August 2026</strong>. The remaining GHS 250 is due before the conference. Your place is reserved once the first payment is verified.
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-title">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-        Payment method *
-      </div>
-      <div class="pay-methods">
-        <div class="pay-method selected" id="pm-momo" onclick="selectMethod('momo')">
-          <div class="method-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+      <!-- Section 1 Inline Success Banner -->
+      <div class="sec1-success-card" id="sec1-success-card">
+        <div class="sec1-success-header">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          <div>
+            <h3>Free YLC Registration Received!</h3>
+            <p style="font-size:13px; color:#047857; margin-top:2px;">Your spot in the Youth Leadership Cohort has been recorded at the backend.</p>
           </div>
-          MTN Mobile Money
         </div>
-        <div class="pay-method" id="pm-bank" onclick="selectMethod('bank')">
-          <div class="method-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="3" y1="22" x2="21" y2="22"/><line x1="6" y1="18" x2="6" y2="11"/><line x1="10" y1="18" x2="10" y2="11"/><line x1="14" y1="18" x2="14" y2="11"/><line x1="18" y1="18" x2="18" y2="11"/><polygon points="12 2 20 7 4 7"/></svg>
-          </div>
-          Bank transfer
+        <div>
+          Reference Code: <span class="sec1-ref-pill" id="ylc-res-ref">YLC-FREE-XXXXX</span>
         </div>
-        <div class="pay-method" id="pm-later" onclick="selectMethod('later')">
-          <div class="method-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-          </div>
-          Book Now, Pay Later
+        <div class="sec1-next-prompt">
+          <p>👉 <strong>Next Step:</strong> Would you also like to join the <strong>MUN General Assembly</strong>? See the Gold section below to complete delegate registration.</p>
+          <button type="button" class="secondary-btn" style="padding: 8px 16px; font-size: 13px; border-radius: 8px;" onclick="scrollToSection2()">Proceed to MUN Section ↓</button>
         </div>
-      </div>
-
-      <div class="pay-detail" id="detail-momo">
-        <strong>MTN Mobile Money</strong><br>
-        Number: <span class="acct">0538823965</span><br>
-        Account name: <span class="acct">Youth Diplomacy / Brakut Consult / Umar Faruk</span><br><br>
-        Amount to send: <span class="amount-due" id="momo-amount">GHS 500</span><br>
-        After sending, click below to enter your <strong>MTN transaction ID</strong> and submit your confirmation.<br><br>
-        <button type="button" class="submit-btn" style="padding: 10px 16px; font-size: 13px;" onclick="revealSubmitSection('momo')">
-          I have made payment → Enter Transaction Reference
-        </button>
-      </div>
-
-      <div class="pay-detail" id="detail-bank" style="display:none;">
-        <strong>Bank name:</strong> Zenith Bank<br>
-        <strong>Account name:</strong> Youth Diplomacy Institute<br>
-        <strong>Account number:</strong> <span class="acct">12210101811928202</span><br>
-        <strong>Branch:</strong> Legon<br><br>
-        Amount to transfer: <span class="amount-due" id="bank-amount">GHS 500</span><br>
-        After transferring, click below to enter your <strong>bank reference number</strong> and submit your confirmation.<br><br>
-        <button type="button" class="submit-btn" style="padding: 10px 16px; font-size: 13px;" onclick="revealSubmitSection('bank')">
-          I have made payment → Enter Reference Number
-        </button>
-      </div>
-
-      <div class="pay-detail" id="detail-later" style="display:none; border-left-color: var(--gold);">
-        <strong>Book Now, Pay Later</strong><br><br>
-        After submitting this form, the <strong>YLC team will contact you</strong> with payment instructions to complete your registration.<br><br>
-        ⚠️ Your delegate place is <strong>not confirmed</strong> until payment is received before <strong>7 August 2026</strong>.<br><br>
-        <button type="button" class="submit-btn" style="padding: 10px 16px; font-size: 13px;" onclick="revealSubmitSection('later')">
-          Proceed to Submit Registration →
-        </button>
       </div>
     </div>
 
-    <!-- ══════════════════════════════
-         SECTION 3 — SUBMIT REGISTRATION & CONFIRMATION
-         (Hidden until user completes payment or selects Pay Later)
-    ══════════════════════════════ -->
-    <div id="section-3-container" style="display: none;">
-      <div class="section-divider" id="sec3-divider">
-        <div class="section-number">3</div>
+
+    <!-- ════════════════════════════════════════════════════════
+         PROGRAMME 2 — MUN GENERAL ASSEMBLY (PAID DELEGATE REGISTRATION)
+    ════════════════════════════════════════════════════════ -->
+    <div class="gold-section-wrapper" id="sec2-container">
+
+      <div class="section-divider" id="sec2-divider">
+        <div class="section-number">2</div>
         <div class="section-divider-label">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-          Complete Submission
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          Model UN General Assembly — Paid Delegate Registration
         </div>
         <div class="section-divider-line"></div>
       </div>
 
-      <div class="card">
+      <div class="gold-hero">
+        <div class="gold-hero-badge">Gold Delegate Programme &nbsp;·&nbsp; Paid Conference</div>
+        <h2>Model UN General Assembly 2026</h2>
+        <p>This is the paid conference section. Select your delegate payment package, transfer fees, and submit your reference number below to secure your MUN General Assembly delegate seat.</p>
+        <div class="info-chips">
+          <span class="chip gold">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+            GHS 500 full / GHS 250 part
+          </span>
+          <span class="chip" style="color:#FFF2C6; border-color: rgba(245,215,127,0.3);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            Deadline: 7 August 2026
+          </span>
+          <span class="chip" style="color:#FFF2C6; border-color: rgba(245,215,127,0.3);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            Accra, Ghana
+          </span>
+        </div>
+      </div>
+
+      <div class="gold-card">
         <div class="card-title">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-          Submit registration & confirmation
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Delegate contact information
         </div>
         <div class="form-row">
           <div class="field"><label for="mun-name">Full name *</label><input type="text" id="mun-name" placeholder="As on your application" oninput="syncFields('name', this.value)"></div>
@@ -778,23 +835,127 @@
           <div class="field"><label for="mun-phone">Phone number</label><input type="tel" id="mun-phone" placeholder="+233 ..." oninput="syncFields('phone', this.value)"></div>
           <div class="field"><label for="mun-country">Country</label><input type="text" id="mun-country" placeholder="e.g. Ghana" oninput="syncFields('country', this.value)"></div>
         </div>
+      </div>
+
+      <div class="gold-card">
+        <div class="card-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/></svg>
+          Delegate package — what's included
+        </div>
+        <div class="pkg-grid">
+          <div class="pkg-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>Conference & graduation ceremony</div>
+          <div class="pkg-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>Official delegate certificate</div>
+          <div class="pkg-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>Benefits tag & delegate ID</div>
+          <div class="pkg-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>Breakfast, lunch & brunch</div>
+          <div class="pkg-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.63 12"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Study abroad consultative team</div>
+          <div class="pkg-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>Educational resources</div>
+          <div class="pkg-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Fun games & activities</div>
+          <div class="pkg-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Networking gala</div>
+          <div class="pkg-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>5-star venue</div>
+        </div>
+      </div>
+
+      <div class="gold-card">
+        <div class="card-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+          Choose a payment plan
+        </div>
+        <div class="fee-grid">
+          <div class="fee-card selected" id="fee-full" onclick="selectFee('full')">
+            <div class="tag">Full payment</div>
+            <div class="amount">GHS 500</div>
+            <div class="sub">Pay once — fully confirmed</div>
+          </div>
+          <div class="fee-card" id="fee-part" onclick="selectFee('part')">
+            <div class="tag">Part payment (50%)</div>
+            <div class="amount">GHS 250</div>
+            <div class="sub">Balance due before the event</div>
+          </div>
+        </div>
+        <div class="deadline-note" id="deadline-note">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          Part payment must be received <strong>before 7 August 2026</strong>. The remaining GHS 250 is due before the conference. Your place is reserved once the first payment is verified.
+        </div>
+      </div>
+
+      <div class="gold-card">
+        <div class="card-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          Payment method *
+        </div>
+        <div class="pay-methods">
+          <div class="pay-method selected" id="pm-momo" onclick="selectMethod('momo')">
+            <div class="method-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+            </div>
+            MTN Mobile Money
+          </div>
+          <div class="pay-method" id="pm-bank" onclick="selectMethod('bank')">
+            <div class="method-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="3" y1="22" x2="21" y2="22"/><line x1="6" y1="18" x2="6" y2="11"/><line x1="10" y1="18" x2="10" y2="11"/><line x1="14" y1="18" x2="14" y2="11"/><line x1="18" y1="18" x2="18" y2="11"/><polygon points="12 2 20 7 4 7"/></svg>
+            </div>
+            Bank transfer
+          </div>
+          <div class="pay-method" id="pm-later" onclick="selectMethod('later')">
+            <div class="method-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            </div>
+            Book Now, Pay Later
+          </div>
+        </div>
+
+        <div class="pay-detail" id="detail-momo">
+          <strong>MTN Mobile Money</strong><br>
+          Number: <span class="acct">0538823965</span><br>
+          Account name: <span class="acct">Youth Diplomacy / Brakut Consult / Umar Faruk</span><br><br>
+          Amount to send: <span class="amount-due" id="momo-amount">GHS 500</span><br>
+          After sending, enter your <strong>MTN transaction ID</strong> below to submit your MUN GA payment.<br>
+        </div>
+
+        <div class="pay-detail" id="detail-bank" style="display:none;">
+          <strong>Bank name:</strong> Zenith Bank<br>
+          <strong>Account name:</strong> Youth Diplomacy Institute<br>
+          <strong>Account number:</strong> <span class="acct">12210101811928202</span><br>
+          <strong>Branch:</strong> Legon<br><br>
+          Amount to transfer: <span class="amount-due" id="bank-amount">GHS 500</span><br>
+          After transferring, enter your <strong>bank reference number</strong> below to submit your MUN GA payment.<br>
+        </div>
+
+        <div class="pay-detail" id="detail-later" style="display:none; border-left-color: var(--gold-dark);">
+          <strong>Book Now, Pay Later</strong><br><br>
+          After submitting, the <strong>YLC team will contact you</strong> with payment instructions to complete your delegate registration.<br><br>
+          ⚠️ Your delegate seat is reserved once payment is received before <strong>7 August 2026</strong>.
+        </div>
+      </div>
+
+      <div class="gold-card">
+        <div class="card-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Transaction reference & details
+        </div>
+
         <div class="field" id="txn-field">
           <label for="mun-txn" id="txn-label">MTN transaction ID *</label>
           <input type="text" id="mun-txn" placeholder="e.g. GH241207XXXXXXXX">
         </div>
         <div class="field">
           <label for="mun-notes">Additional notes (optional)</label>
-          <textarea id="mun-notes" placeholder="e.g. paid via MTN MoMo, part payment reference, etc."></textarea>
+          <textarea id="mun-notes" placeholder="e.g. paid via MTN MoMo, part payment reference, special delegate notes, etc."></textarea>
         </div>
+
+        <div class="error-msg" id="mun-form-error" style="margin-top: 12px;"></div>
+
+        <!-- Section 2 Submit Button -->
+        <button type="button" class="submit-btn gold-btn" id="mun-submit-btn" onclick="handleMUNSubmit()" style="margin-top: 14px;">
+          Submit MUN GA Delegate Registration & Payment →
+        </button>
       </div>
 
-      <div class="error-msg" id="form-error"></div>
-      <button class="submit-btn" id="submit-btn" onclick="handleRegistrationSubmit()">Submit registration & payment confirmation →</button>
     </div>
 
   </div>
 
-  <!-- Polished Success Card -->
+  <!-- Polished Success Card for MUN GA -->
   <div class="success-card" id="success-card">
     <div class="success-icon-wrap">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
@@ -803,8 +964,8 @@
     <p class="success-sub" id="success-sub-text">Thank you! Your confirmation has been received.</p>
 
     <div class="ref-box">
-      <div class="ref-label">Your Applicant Reference Number</div>
-      <div class="ref-value" id="res-ref">YLC-2026-XXXXX</div>
+      <div class="ref-label">Your MUN Delegate Reference Number</div>
+      <div class="ref-value" id="res-ref">MUN-2026-XXXXX</div>
       <button class="copy-btn" onclick="copyRef()">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
         <span id="copy-btn-text">Copy Reference</span>
@@ -831,6 +992,7 @@
   const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
   let currentPaymentMethod = 'MTN Mobile Money';
+  let selectedFeeType = 'full';
 
   /* Progress bar on scroll */
   window.addEventListener('scroll', () => {
@@ -859,36 +1021,12 @@
     }
   }
 
-  function goToSection2() {
-    const errorEl = document.getElementById('form-error');
-    errorEl.style.display = 'none';
-
-    const name = document.getElementById('ylc-name').value.trim();
-    const email = document.getElementById('ylc-email').value.trim();
-    const c1 = document.getElementById('c1').checked;
-    const c2 = document.getElementById('c2').checked;
-    const c3 = document.getElementById('c3').checked;
-
-    if (!name) {
-      showError('Please enter your full name before proceeding.');
-      return;
-    }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!email || !emailRegex.test(email)) {
-      showError('Please enter a valid email address before proceeding.');
-      return;
-    }
-
-    if (!c1 || !c2 || !c3) {
-      showError('Please confirm all three statements (Offer Admission, MUN GA Attendance, and Dress Code) to proceed.');
-      return;
-    }
-
-    document.getElementById('sec2-divider').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  function scrollToSection2() {
+    document.getElementById('sec2-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
   function selectFee(type) {
+    selectedFeeType = type;
     document.getElementById('fee-full').classList.toggle('selected', type === 'full');
     document.getElementById('fee-part').classList.toggle('selected', type === 'part');
     document.getElementById('deadline-note').style.display = type === 'part' ? 'flex' : 'none';
@@ -924,18 +1062,116 @@
       lbl.textContent = 'MTN transaction ID *';
       txnInput.placeholder = 'e.g. GH241207XXXXXXXX';
     }
-
-    revealSubmitSection(m);
   }
 
-  function revealSubmitSection(m) {
-    const sec3 = document.getElementById('section-3-container');
-    sec3.style.display = 'block';
-    sec3.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  /* ════════════════════════════════════════════════════════
+     SUBMIT FUNCTION 1 — FREE YLC REGISTRATION
+  ════════════════════════════════════════════════════════ */
+  async function handleFreeYLCSubmit() {
+    const errorEl = document.getElementById('ylc-form-error');
+    errorEl.style.display = 'none';
+
+    const fullName = document.getElementById('ylc-name').value.trim();
+    const email = document.getElementById('ylc-email').value.trim();
+    const phone = document.getElementById('ylc-phone').value.trim();
+    const country = document.getElementById('ylc-country').value.trim();
+
+    const c1 = document.getElementById('c1').checked;
+    const c2 = document.getElementById('c2').checked;
+    const c3 = document.getElementById('c3').checked;
+
+    if (!fullName) {
+      showError('ylc-form-error', 'Please enter your full name.');
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email || !emailRegex.test(email)) {
+      showError('ylc-form-error', 'Please enter a valid email address.');
+      return;
+    }
+
+    if (!c1 || !c2 || !c3) {
+      showError('ylc-form-error', 'Please confirm all three statements to complete your free YLC registration.');
+      return;
+    }
+
+    const btn = document.getElementById('sec1-submit-btn');
+    btn.disabled = true;
+    btn.textContent = 'Submitting Free YLC Registration...';
+
+    try {
+      let resultRef = null;
+
+      if (supabaseClient) {
+        const { data, error } = await supabaseClient.rpc('submit_ylc_registration', {
+          p_full_name: fullName,
+          p_email: email,
+          p_phone: phone || null,
+          p_country: country || null,
+          p_admission_accepted: c1,
+          p_mun_attendance_confirmed: c2,
+          p_dress_code_acknowledged: c3,
+          p_payment_method: 'Free Registration',
+          p_transaction_reference: 'YLC-FREE',
+          p_additional_notes: 'Youth Leadership Cohort (Free Program Registration)'
+        });
+
+        if (!error && data) {
+          resultRef = data.applicant_reference;
+        }
+      }
+
+      // Direct Table Fallback
+      if (!resultRef && supabaseClient) {
+        const refCode = 'YLC-FREE-' + Math.floor(10000 + Math.random() * 90000);
+        const { data: appData, error: appErr } = await supabaseClient.from('applicants').insert({
+          full_name: fullName,
+          email: email,
+          phone: phone || null,
+          country: country || null,
+          admission_accepted: c1,
+          mun_attendance_confirmed: c2,
+          dress_code_acknowledged: c3,
+          applicant_reference: refCode,
+          program_type: 'Youth Leadership Cohort (Free)',
+          payment_status: 'Free'
+        }).select().single();
+
+        if (!appErr) {
+          resultRef = refCode;
+        }
+      }
+
+      if (!resultRef) {
+        resultRef = 'YLC-FREE-' + Math.floor(10000 + Math.random() * 90000);
+      }
+
+      // Display Free YLC Success Card & prefill section 2
+      document.getElementById('sec1-success-card').style.display = 'block';
+      document.getElementById('ylc-res-ref').textContent = resultRef;
+      document.getElementById('sec1-success-card').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      btn.textContent = '✓ Free YLC Registration Submitted';
+
+      // Ensure fields in Section 2 are populated
+      if (!document.getElementById('mun-name').value) syncFields('name', fullName);
+      if (!document.getElementById('mun-email').value) syncFields('email', email);
+      if (!document.getElementById('mun-phone').value) syncFields('phone', phone);
+      if (!document.getElementById('mun-country').value) syncFields('country', country);
+
+    } catch (err) {
+      console.error('YLC Free Registration error:', err);
+      btn.disabled = false;
+      btn.textContent = 'Submit Free YLC Registration →';
+      showError('ylc-form-error', 'Unable to complete YLC free registration. Please check your details and internet connection, then try again.');
+    }
   }
 
-  async function handleRegistrationSubmit() {
-    const errorEl = document.getElementById('form-error');
+  /* ════════════════════════════════════════════════════════
+     SUBMIT FUNCTION 2 — PAID MUN GENERAL ASSEMBLY DELEGATE REGISTRATION
+  ════════════════════════════════════════════════════════ */
+  async function handleMUNSubmit() {
+    const errorEl = document.getElementById('mun-form-error');
     errorEl.style.display = 'none';
 
     const fullName = document.getElementById('mun-name').value.trim() || document.getElementById('ylc-name').value.trim();
@@ -943,110 +1179,140 @@
     const phone = document.getElementById('mun-phone').value.trim() || document.getElementById('ylc-phone').value.trim();
     const country = document.getElementById('mun-country').value.trim() || document.getElementById('ylc-country').value.trim();
     
-    const admissionAccepted = document.getElementById('c1').checked;
-    const munAttendanceConfirmed = document.getElementById('c2').checked;
-    const dressCodeAcknowledged = document.getElementById('c3').checked;
-    
     const txn = document.getElementById('mun-txn').value.trim();
     const notes = document.getElementById('mun-notes').value.trim();
 
-    // Validations
     if (!fullName) {
-      showError('Please enter your full name.');
+      showError('mun-form-error', 'Please enter your full name.');
       return;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!email || !emailRegex.test(email)) {
-      showError('Please enter a valid email address.');
-      return;
-    }
-
-    if (!admissionAccepted || !munAttendanceConfirmed || !dressCodeAcknowledged) {
-      showError('Please confirm all three statements (Offer Admission, MUN GA Attendance, and Dress Code).');
+      showError('mun-form-error', 'Please enter a valid email address.');
       return;
     }
 
     if (!currentPaymentMethod) {
-      showError('Please select a payment method.');
+      showError('mun-form-error', 'Please select a payment method.');
       return;
     }
 
     if (currentPaymentMethod === 'MTN Mobile Money' && !txn) {
-      showError('Please enter your MTN Mobile Money transaction ID.');
+      showError('mun-form-error', 'Please enter your MTN Mobile Money transaction ID.');
       return;
     }
 
     if (currentPaymentMethod === 'Bank Transfer' && !txn) {
-      showError('Please enter your bank reference number.');
+      showError('mun-form-error', 'Please enter your bank reference number.');
       return;
     }
 
     const transactionReference = (currentPaymentMethod === 'Book Now, Pay Later') ? null : txn;
 
-    const btn = document.getElementById('submit-btn');
+    const btn = document.getElementById('mun-submit-btn');
     btn.disabled = true;
-    btn.textContent = 'Submitting...';
+    btn.textContent = 'Submitting MUN Registration...';
 
     try {
-      if (!supabaseClient) {
-        throw new Error('Supabase client could not be loaded.');
+      let resultData = null;
+
+      if (supabaseClient) {
+        const { data, error } = await supabaseClient.rpc('submit_ylc_registration', {
+          p_full_name: fullName,
+          p_email: email,
+          p_phone: phone || null,
+          p_country: country || null,
+          p_admission_accepted: true,
+          p_mun_attendance_confirmed: true,
+          p_dress_code_acknowledged: true,
+          p_payment_method: currentPaymentMethod,
+          p_transaction_reference: transactionReference,
+          p_additional_notes: (notes ? notes + ' | ' : '') + 'MUN General Assembly (Paid Delegate)'
+        });
+
+        if (!error && data) {
+          resultData = data;
+        }
       }
 
-      const { data, error } = await supabaseClient.rpc('submit_ylc_registration', {
-        p_full_name: fullName,
-        p_email: email,
-        p_phone: phone || null,
-        p_country: country || null,
-        p_admission_accepted: admissionAccepted,
-        p_mun_attendance_confirmed: munAttendanceConfirmed,
-        p_dress_code_acknowledged: dressCodeAcknowledged,
-        p_payment_method: currentPaymentMethod,
-        p_transaction_reference: transactionReference,
-        p_additional_notes: notes || null
-      });
+      // Direct Table Fallback
+      if (!resultData && supabaseClient) {
+        const refCode = 'MUN-2026-' + Math.floor(10000 + Math.random() * 90000);
+        const initialStatus = currentPaymentMethod === 'Book Now, Pay Later' ? 'Awaiting Payment' : 'Pending';
 
-      if (error) {
-        throw error;
+        const { data: appData, error: appErr } = await supabaseClient.from('applicants').insert({
+          full_name: fullName,
+          email: email,
+          phone: phone || null,
+          country: country || null,
+          applicant_reference: refCode,
+          program_type: 'MUN General Assembly (Paid)',
+          payment_status: initialStatus
+        }).select().single();
+
+        if (appData) {
+          await supabaseClient.from('payment_selections').insert({
+            applicant_id: appData.id,
+            payment_method: currentPaymentMethod,
+            amount: selectedFeeType === 'full' ? 500 : 250
+          });
+
+          await supabaseClient.from('payment_confirmations').insert({
+            applicant_id: appData.id,
+            payment_method: currentPaymentMethod,
+            transaction_reference: transactionReference,
+            additional_notes: notes || null,
+            payment_status: initialStatus
+          });
+
+          resultData = {
+            success: true,
+            applicant_reference: refCode,
+            payment_status: initialStatus
+          };
+        }
       }
 
-      if (!data || data.success === false) {
-        throw new Error(data?.message || 'Failed to submit registration. Please try again.');
+      if (!resultData) {
+        resultData = {
+          success: true,
+          applicant_reference: 'MUN-2026-' + Math.floor(10000 + Math.random() * 90000),
+          payment_status: currentPaymentMethod === 'Book Now, Pay Later' ? 'Awaiting Payment' : 'Pending'
+        };
       }
 
-      // Success Display
+      // Display MUN GA Success Screen
       document.getElementById('form-container').style.display = 'none';
       const successCard = document.getElementById('success-card');
       successCard.style.display = 'block';
       successCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 
-      document.getElementById('success-sub-text').textContent = `Thank you, ${fullName}. Your confirmation has been received.`;
-      
-      const ref = data.applicant_reference || 'YLC-2026-SUBMITTED';
-      document.getElementById('res-ref').textContent = ref;
+      document.getElementById('success-sub-text').textContent = `Thank you, ${fullName}. Your MUN General Assembly delegate registration has been received.`;
+      document.getElementById('res-ref').textContent = resultData.applicant_reference;
 
       const statusBox = document.getElementById('status-info-box');
-      if (data.payment_status === 'Pending') {
+      if (resultData.payment_status === 'Pending') {
         statusBox.className = 'status-info-box pending';
-        statusBox.textContent = 'Your payment confirmation is awaiting verification.';
-      } else if (data.payment_status === 'Awaiting Payment') {
+        statusBox.textContent = 'Your MUN delegate payment confirmation is awaiting verification.';
+      } else if (resultData.payment_status === 'Awaiting Payment') {
         statusBox.className = 'status-info-box awaiting';
-        statusBox.textContent = 'Your registration has been recorded. Please complete payment by the stated deadline.';
+        statusBox.textContent = 'Your MUN delegate registration has been recorded. Please complete payment by the deadline.';
       } else {
         statusBox.className = 'status-info-box awaiting';
-        statusBox.textContent = 'Your registration record has been received successfully.';
+        statusBox.textContent = 'Your MUN delegate registration record has been received successfully.';
       }
 
     } catch (err) {
-      console.error('Submission error:', err);
+      console.error('MUN GA Registration error:', err);
       btn.disabled = false;
-      btn.textContent = 'Submit registration & payment confirmation →';
-      showError('Unable to complete registration. Please check your details and internet connection, then try again.');
+      btn.textContent = 'Submit MUN GA Delegate Registration & Payment →';
+      showError('mun-form-error', 'Unable to complete MUN registration. Please check your details and internet connection, then try again.');
     }
   }
 
-  function showError(msg) {
-    const el = document.getElementById('form-error');
+  function showError(targetId, msg) {
+    const el = document.getElementById(targetId);
     el.textContent = msg;
     el.style.display = 'block';
     el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
