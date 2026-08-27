@@ -475,6 +475,13 @@
 <main class="main">
 
   <!-- ══════════════════════════════
+       EVENT FLYER
+  ══════════════════════════════ -->
+  <div class="card" style="padding:0; overflow:hidden;">
+    <img src="imaggaa.jpg" alt="Event Flyer" style="width:100%; display:block; height:auto;">
+  </div>
+
+  <!-- ══════════════════════════════
        SECTION 1 — YLC REGISTRATION
   ══════════════════════════════ -->
   <div class="section-divider">
@@ -851,24 +858,28 @@
     const phone   = document.getElementById('ylc-phone').value.trim();
     const country = document.getElementById('ylc-country').value.trim();
     const checks  = ['c1','c2','c3'].every(id => document.getElementById(id).checked);
-    if (!name || !email) { showError('ylc-error','Please enter your name and email address.'); return; }
-    if (!checks) { showError('ylc-error','Please confirm all three statements before submitting.'); return; }
+    const sessions = Array.from(document.querySelectorAll('.session-cb:checked')).map(cb => cb.value);
+
+    if (!name || !email) { showError('ylc-error', 'Please enter your name and email address.'); return; }
+    if (sessions.length === 0) { showError('ylc-error', 'Please tick at least one training session you can attend.'); return; }
+    if (!checks) { showError('ylc-error', 'Please confirm all three statements before submitting.'); return; }
+
     const btn = document.getElementById('ylc-btn');
+    if (btn.disabled) return;
     btn.disabled = true; btn.textContent = 'Submitting…';
+
     try {
       if (!supabaseClient) throw new Error('Registration service unavailable');
 
-      const { error } = await supabaseClient.rpc('submit_ylc_registration', {
+      const { data, error } = await supabaseClient.rpc('submit_ylc_confirmation', {
         p_full_name: name,
         p_email: email,
         p_phone: phone || null,
         p_country: country || null,
+        p_training_sessions: sessions,
         p_admission_accepted: true,
         p_mun_attendance_confirmed: true,
-        p_dress_code_acknowledged: true,
-        p_payment_method: 'Free Registration',
-        p_transaction_reference: 'YLC-FREE',
-        p_additional_notes: 'Youth Leadership Cohort 2026 — new applicant registration'
+        p_dress_code_acknowledged: true
       });
 
       if (error) throw error;
@@ -877,13 +888,20 @@
       document.getElementById('mun-email').value = email;
       document.getElementById('mun-phone').value = phone;
       document.getElementById('mun-country').value = country;
-      document.getElementById('ylc-success').style.display = 'block';
-      document.getElementById('ylc-success').scrollIntoView({ behavior:'smooth', block:'nearest' });
+      
+      const successBanner = document.getElementById('ylc-success');
+      const descEl = successBanner.querySelector('p');
+      if (descEl && data) {
+        descEl.textContent = data.message;
+      }
+      successBanner.style.display = 'block';
+      successBanner.scrollIntoView({ behavior:'smooth', block:'nearest' });
       btn.textContent = 'Registration confirmed ✓';
       document.getElementById('ylc-error').style.display = 'none';
     } catch(e) {
       btn.disabled = false; btn.textContent = 'Confirm my place →';
-      showError('ylc-error','Something went wrong. Please try again or email cohortyouthleadership@gmail.com.');
+      const message = e?.message || 'Something went wrong. Please try again or email cohortyouthleadership@gmail.com.';
+      showError('ylc-error', message);
     }
   }
 
