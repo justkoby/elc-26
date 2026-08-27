@@ -21,7 +21,8 @@ import {
   ChevronRight,
   ShieldCheck,
   CreditCard,
-  FileCheck
+  FileCheck,
+  GraduationCap
 } from 'lucide-react';
 
 const AdminDashboard = () => {
@@ -30,7 +31,12 @@ const AdminDashboard = () => {
   const [errorMsg, setErrorMsg] = useState('');
   const [applicants, setApplicants] = useState([]);
 
-  // Tab State: 'ALL' | 'SECTION1' (YLC Registrations) | 'SECTION2' (MUN Payments)
+  // Graduation registrations state
+  const [gradRegistrations, setGradRegistrations] = useState([]);
+  const [gradLoading, setGradLoading] = useState(false);
+  const [gradError, setGradError] = useState('');
+
+  // Tab State: 'ALL' | 'SECTION1' (YLC Registrations) | 'SECTION2' (MUN Payments) | 'GRADUATION' (Graduation Registrations)
   const [activeTab, setActiveTab] = useState('ALL');
   
   // Filtering & Sorting State
@@ -109,9 +115,33 @@ const AdminDashboard = () => {
     }
   }, [sortOrder]);
 
+  const fetchGraduationData = useCallback(async () => {
+    setGradLoading(true);
+    setGradError('');
+
+    try {
+      const { data, error } = await supabase
+        .from('graduation_registrations')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setGradRegistrations(data || []);
+    } catch (err) {
+      console.error('Failed to load graduation registrations:', err);
+      setGradError('Failed to load graduation records. Please check database permissions or try again.');
+    } finally {
+      setGradLoading(false);
+    }
+  }, []);
+
   useEffect(() => {
-    fetchDashboardData();
-  }, [fetchDashboardData]);
+    if (activeTab === 'GRADUATION') {
+      fetchGraduationData();
+    } else {
+      fetchDashboardData();
+    }
+  }, [activeTab, fetchDashboardData, fetchGraduationData]);
 
   // Handle Logout
   const handleLogout = async () => {
@@ -195,6 +225,31 @@ const AdminDashboard = () => {
       return matchesSearch && matchesMethod && matchesStatus;
     });
   }, [processedApplicants, activeTab, searchQuery, methodFilter, statusFilter]);
+
+  // Filtered & Searched Graduation Registrations
+  const filteredGradRegistrations = useMemo(() => {
+    return gradRegistrations.filter((reg) => {
+      const query = searchQuery.toLowerCase();
+      const name = reg.full_name || '';
+      const email = reg.email || '';
+      const ref = reg.graduation_reference || '';
+
+      const matchesSearch =
+        !query ||
+        name.toLowerCase().includes(query) ||
+        email.toLowerCase().includes(query) ||
+        ref.toLowerCase().includes(query);
+
+      return matchesSearch;
+    });
+  }, [gradRegistrations, searchQuery]);
+
+  // Graduation Pagination calculation
+  const gradTotalPages = Math.ceil(filteredGradRegistrations.length / itemsPerPage) || 1;
+  const paginatedGradRegistrations = useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage;
+    return filteredGradRegistrations.slice(start, start + itemsPerPage);
+  }, [filteredGradRegistrations, currentPage]);
 
   // Pagination calculation
   const totalPages = Math.ceil(filteredApplicants.length / itemsPerPage) || 1;
@@ -477,8 +532,8 @@ const AdminDashboard = () => {
 
           <div style={{ display: 'flex', gap: '10px' }}>
             <button
-              onClick={fetchDashboardData}
-              disabled={loading}
+              onClick={activeTab === 'GRADUATION' ? fetchGraduationData : fetchDashboardData}
+              disabled={activeTab === 'GRADUATION' ? gradLoading : loading}
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
@@ -494,35 +549,37 @@ const AdminDashboard = () => {
                 boxShadow: '0 1px 3px rgba(0, 86, 138, 0.06)'
               }}
             >
-              <RefreshCw size={15} className={loading ? 'animate-spin' : ''} />
+              <RefreshCw size={15} className={(activeTab === 'GRADUATION' ? gradLoading : loading) ? 'animate-spin' : ''} />
               Refresh
             </button>
 
-            <button
-              onClick={exportToCSV}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-                background: '#009EDB',
-                color: '#ffffff',
-                border: 'none',
-                padding: '10px 16px',
-                borderRadius: '8px',
-                fontSize: '13px',
-                fontWeight: 600,
-                cursor: 'pointer',
-                boxShadow: '0 4px 12px rgba(0, 158, 219, 0.2)'
-              }}
-            >
-              <Download size={15} />
-              Export CSV
-            </button>
+            {activeTab !== 'GRADUATION' && (
+              <button
+                onClick={exportToCSV}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  background: '#009EDB',
+                  color: '#ffffff',
+                  border: 'none',
+                  padding: '10px 16px',
+                  borderRadius: '8px',
+                  fontSize: '13px',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 12px rgba(0, 158, 219, 0.2)'
+                }}
+              >
+                <Download size={15} />
+                Export CSV
+              </button>
+            )}
           </div>
         </div>
 
         {/* Error Alert */}
-        {errorMsg && (
+        {(errorMsg || gradError) && (
           <div style={{
             background: '#fef2f2',
             border: '1px solid #fca5a5',
@@ -537,10 +594,10 @@ const AdminDashboard = () => {
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
               <AlertCircle size={20} />
-              <span>{errorMsg}</span>
+              <span>{errorMsg || gradError}</span>
             </div>
             <button
-              onClick={fetchDashboardData}
+              onClick={activeTab === 'GRADUATION' ? fetchGraduationData : fetchDashboardData}
               style={{
                 background: '#991b1b',
                 color: '#ffffff',
@@ -656,7 +713,8 @@ const AdminDashboard = () => {
           gap: '8px',
           marginBottom: '20px',
           borderBottom: '2px solid #d0e6f3',
-          paddingBottom: '0'
+          paddingBottom: '0',
+          flexWrap: 'wrap'
         }}>
           <button
             onClick={() => { setActiveTab('ALL'); setCurrentPage(1); }}
@@ -723,6 +781,28 @@ const AdminDashboard = () => {
             <CreditCard size={16} color={activeTab === 'SECTION2' ? '#009EDB' : '#4a6f8a'} />
             Section 2 & 3: MUN GA Delegate Payments
           </button>
+
+          <button
+            onClick={() => { setActiveTab('GRADUATION'); setCurrentPage(1); }}
+            style={{
+              padding: '12px 20px',
+              fontSize: '13px',
+              fontWeight: 600,
+              borderRadius: '8px 8px 0 0',
+              border: 'none',
+              borderBottom: activeTab === 'GRADUATION' ? '3px solid #009EDB' : '3px solid transparent',
+              background: activeTab === 'GRADUATION' ? '#ffffff' : 'transparent',
+              color: activeTab === 'GRADUATION' ? '#013664' : '#4a6f8a',
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              transition: 'all 0.15s'
+            }}
+          >
+            <GraduationCap size={16} color={activeTab === 'GRADUATION' ? '#009EDB' : '#4a6f8a'} />
+            Graduation Registrations ({gradRegistrations.length})
+          </button>
         </div>
 
         {/* Toolbar: Search, Filters & Sorting */}
@@ -761,8 +841,8 @@ const AdminDashboard = () => {
           </div>
 
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', alignItems: 'center' }}>
-            {/* Payment Method Filter (Visible on ALL and SECTION2) */}
-            {activeTab !== 'SECTION1' && (
+            {/* Payment Method Filter (Visible on ALL and SECTION2, but not SECTION1 or GRADUATION) */}
+            {(activeTab !== 'SECTION1' && activeTab !== 'GRADUATION') && (
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <Filter size={14} color="#4a6f8a" />
                 <select
@@ -787,8 +867,8 @@ const AdminDashboard = () => {
               </div>
             )}
 
-            {/* Payment Status Filter (Visible on ALL and SECTION2) */}
-            {activeTab !== 'SECTION1' && (
+            {/* Payment Status Filter (Visible on ALL and SECTION2, but not SECTION1 or GRADUATION) */}
+            {(activeTab !== 'SECTION1' && activeTab !== 'GRADUATION') && (
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <select
                   value={statusFilter}
@@ -843,7 +923,7 @@ const AdminDashboard = () => {
           boxShadow: '0 2px 8px rgba(0, 86, 138, 0.05)',
           overflow: 'hidden'
         }}>
-          {loading ? (
+          {((activeTab === 'GRADUATION' ? gradLoading : loading)) ? (
             <div style={{ padding: '48px', textAlign: 'center', color: '#4a6f8a' }}>
               <div style={{
                 width: '36px',
@@ -855,13 +935,19 @@ const AdminDashboard = () => {
                 animation: 'spin 0.8s linear infinite'
               }} />
               <style>{`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}</style>
-              <p style={{ margin: 0, fontSize: '14px', fontWeight: 500 }}>Loading applicant records…</p>
+              <p style={{ margin: 0, fontSize: '14px', fontWeight: 500 }}>
+                {activeTab === 'GRADUATION' ? 'Loading graduation records...' : 'Loading applicant records…'}
+              </p>
             </div>
-          ) : filteredApplicants.length === 0 ? (
+          ) : (activeTab === 'GRADUATION' ? filteredGradRegistrations.length === 0 : filteredApplicants.length === 0) ? (
             <div style={{ padding: '48px 24px', textAlign: 'center', color: '#4a6f8a' }}>
               <Users size={36} color="#90cfe8" style={{ marginBottom: '12px' }} />
-              <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#013664', margin: '0 0 6px 0' }}>No records found</h3>
-              <p style={{ fontSize: '13px', margin: 0 }}>Try clearing your search terms or switching tabs.</p>
+              <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#013664', margin: '0 0 6px 0' }}>
+                {activeTab === 'GRADUATION' && gradError ? 'Error loading records' : 'No records found'}
+              </h3>
+              <p style={{ fontSize: '13px', margin: 0 }}>
+                {activeTab === 'GRADUATION' && gradError ? 'Please check database permissions or try again.' : 'Try clearing your search terms or switching tabs.'}
+              </p>
             </div>
           ) : (
             <>
@@ -869,230 +955,300 @@ const AdminDashboard = () => {
                 <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '13px' }}>
                   <thead>
                     <tr style={{ background: '#f4f9fd', borderBottom: '1px solid #d0e6f3', color: '#1c3f5e', textTransform: 'uppercase', fontSize: '11px', letterSpacing: '0.06em' }}>
-                      <th style={{ padding: '14px 16px' }}>Reference</th>
-                      <th style={{ padding: '14px 16px' }}>Applicant</th>
-                      <th style={{ padding: '14px 16px' }}>Contact</th>
-                      
-                      {/* TAB SPECIFIC HEADERS */}
-                      {activeTab === 'SECTION1' ? (
+                      {activeTab === 'GRADUATION' ? (
                         <>
-                          <th style={{ padding: '14px 16px' }}>Offer Accepted</th>
-                          <th style={{ padding: '14px 16px' }}>MUN Attending</th>
-                          <th style={{ padding: '14px 16px' }}>Dress Code</th>
-                        </>
-                      ) : activeTab === 'SECTION2' ? (
-                        <>
-                          <th style={{ padding: '14px 16px' }}>Payment Method</th>
-                          <th style={{ padding: '14px 16px' }}>Txn / Reference</th>
+                          <th style={{ padding: '14px 16px' }}>Reference</th>
+                          <th style={{ padding: '14px 16px' }}>Full Name</th>
+                          <th style={{ padding: '14px 16px' }}>Contact</th>
+                          <th style={{ padding: '14px 16px' }}>Payment Plan</th>
+                          <th style={{ padding: '14px 16px' }}>Submitted Amt</th>
                           <th style={{ padding: '14px 16px' }}>Status</th>
-                          <th style={{ padding: '14px 16px' }}>Verified Date</th>
+                          <th style={{ padding: '14px 16px' }}>Balance Due</th>
+                          <th style={{ padding: '14px 16px' }}>Date</th>
+                          <th style={{ padding: '14px 16px', textAlign: 'right' }}>Actions</th>
                         </>
                       ) : (
                         <>
-                          <th style={{ padding: '14px 16px' }}>Payment Method</th>
-                          <th style={{ padding: '14px 16px' }}>Txn / Reference</th>
-                          <th style={{ padding: '14px 16px' }}>Status</th>
+                          <th style={{ padding: '14px 16px' }}>Reference</th>
+                          <th style={{ padding: '14px 16px' }}>Applicant</th>
+                          <th style={{ padding: '14px 16px' }}>Contact</th>
+                          
+                          {/* TAB SPECIFIC HEADERS */}
+                          {activeTab === 'SECTION1' ? (
+                            <>
+                              <th style={{ padding: '14px 16px' }}>Offer Accepted</th>
+                              <th style={{ padding: '14px 16px' }}>MUN Attending</th>
+                              <th style={{ padding: '14px 16px' }}>Dress Code</th>
+                            </>
+                          ) : activeTab === 'SECTION2' ? (
+                            <>
+                              <th style={{ padding: '14px 16px' }}>Payment Method</th>
+                              <th style={{ padding: '14px 16px' }}>Txn / Reference</th>
+                              <th style={{ padding: '14px 16px' }}>Status</th>
+                              <th style={{ padding: '14px 16px' }}>Verified Date</th>
+                            </>
+                          ) : (
+                            <>
+                              <th style={{ padding: '14px 16px' }}>Payment Method</th>
+                              <th style={{ padding: '14px 16px' }}>Txn / Reference</th>
+                              <th style={{ padding: '14px 16px' }}>Status</th>
+                            </>
+                          )}
+
+                          <th style={{ padding: '14px 16px' }}>Date</th>
+                          <th style={{ padding: '14px 16px', textAlign: 'right' }}>Actions</th>
                         </>
                       )}
-
-                      <th style={{ padding: '14px 16px' }}>Date</th>
-                      <th style={{ padding: '14px 16px', textAlign: 'right' }}>Actions</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {paginatedApplicants.map((app) => {
-                      const badge = getStatusBadgeStyle(app.status);
-                      return (
-                        <tr key={app.id} style={{ borderBottom: '1px solid #eaf6fc', transition: 'background 0.15s' }}>
-                          <td style={{ padding: '14px 16px' }}>
-                            <div style={{ fontFamily: "'Courier New', monospace", fontWeight: 700, color: '#013664' }}>
-                              {app.ref}
-                            </div>
-                            <div style={{ marginTop: '4px' }}>
-                              {app.isFreeRegistration ? (
-                                <span style={{
-                                  fontSize: '10px',
-                                  fontWeight: 700,
-                                  textTransform: 'uppercase',
-                                  letterSpacing: '0.04em',
-                                  padding: '2px 7px',
-                                  borderRadius: '12px',
-                                  background: '#ecfdf5',
-                                  color: '#047857',
-                                  border: '1px solid #a7f3d0'
-                                }}>
-                                  YLC Free
-                                </span>
-                              ) : (
-                                <span style={{
-                                  fontSize: '10px',
-                                  fontWeight: 700,
-                                  textTransform: 'uppercase',
-                                  letterSpacing: '0.04em',
-                                  padding: '2px 7px',
-                                  borderRadius: '12px',
-                                  background: '#FAF6EB',
-                                  color: '#9E7D23',
-                                  border: '1px solid #E8D9AF'
-                                }}>
-                                  MUN GA Paid
-                                </span>
-                              )}
-                            </div>
-                          </td>
-                          <td style={{ padding: '14px 16px' }}>
-                            <div style={{ fontWeight: 600, color: '#0d1f2d' }}>{app.name}</div>
-                            <div style={{ fontSize: '12px', color: '#4a6f8a' }}>{app.country}</div>
-                          </td>
-                          <td style={{ padding: '14px 16px' }}>
-                            <div style={{ color: '#1c3f5e' }}>{app.email}</div>
-                            <div style={{ fontSize: '12px', color: '#4a6f8a' }}>{app.phone}</div>
-                          </td>
+                    {activeTab === 'GRADUATION' ? (
+                      paginatedGradRegistrations.map((reg) => {
+                        const badge = getStatusBadgeStyle(reg.payment_status);
+                        return (
+                          <tr key={reg.id || reg.graduation_reference || Math.random()} style={{ borderBottom: '1px solid #eaf6fc', transition: 'background 0.15s' }}>
+                            <td style={{ padding: '14px 16px' }}>
+                              <div style={{ fontFamily: "'Courier New', monospace", fontWeight: 700, color: '#013664' }}>
+                                {reg.graduation_reference || 'N/A'}
+                              </div>
+                            </td>
+                            <td style={{ padding: '14px 16px' }}>
+                              <div style={{ fontWeight: 600, color: '#0d1f2d' }}>{reg.full_name || 'N/A'}</div>
+                            </td>
+                            <td style={{ padding: '14px 16px' }}>
+                              <div style={{ color: '#1c3f5e' }}>{reg.email || 'N/A'}</div>
+                              <div style={{ fontSize: '12px', color: '#4a6f8a' }}>{reg.phone || 'N/A'}</div>
+                            </td>
+                            <td style={{ padding: '14px 16px', color: '#1c3f5e', fontWeight: 500 }}>
+                              {reg.payment_plan || 'N/A'}
+                            </td>
+                            <td style={{ padding: '14px 16px', color: '#007ab8', fontWeight: 600 }}>
+                              {reg.submitted_amount !== undefined && reg.submitted_amount !== null ? `GHS ${reg.submitted_amount}` : 'N/A'}
+                            </td>
+                            <td style={{ padding: '14px 16px' }}>
+                              <span style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '5px',
+                                padding: '4px 10px',
+                                borderRadius: '20px',
+                                fontSize: '12px',
+                                fontWeight: 600,
+                                background: badge.bg,
+                                border: `1px solid ${badge.border}`,
+                                color: badge.color
+                              }}>
+                                {badge.icon}
+                                {reg.payment_status || 'Pending'}
+                              </span>
+                            </td>
+                            <td style={{ padding: '14px 16px', color: '#b91c1c', fontWeight: 600 }}>
+                              {reg.balance_due !== undefined && reg.balance_due !== null ? `GHS ${reg.balance_due}` : 'N/A'}
+                            </td>
+                            <td style={{ padding: '14px 16px', color: '#4a6f8a', fontSize: '12px' }}>
+                              {reg.created_at ? new Date(reg.created_at).toLocaleDateString() : 'N/A'}
+                            </td>
+                            <td style={{ padding: '14px 16px', textAlign: 'right' }}>
+                              {/* Read only, no actions */}
+                            </td>
+                          </tr>
+                        );
+                      })
+                    ) : (
+                      paginatedApplicants.map((app) => {
+                        const badge = getStatusBadgeStyle(app.status);
+                        return (
+                          <tr key={app.id} style={{ borderBottom: '1px solid #eaf6fc', transition: 'background 0.15s' }}>
+                            <td style={{ padding: '14px 16px' }}>
+                              <div style={{ fontFamily: "'Courier New', monospace", fontWeight: 700, color: '#013664' }}>
+                                {app.ref}
+                              </div>
+                              <div style={{ marginTop: '4px' }}>
+                                {app.isFreeRegistration ? (
+                                  <span style={{
+                                    fontSize: '10px',
+                                    fontWeight: 700,
+                                    textTransform: 'uppercase',
+                                    letterSpacing: '0.04em',
+                                    padding: '2px 7px',
+                                    borderRadius: '12px',
+                                    background: '#ecfdf5',
+                                    color: '#047857',
+                                    border: '1px solid #a7f3d0'
+                                  }}>
+                                    YLC Free
+                                  </span>
+                                ) : (
+                                  <span style={{
+                                    fontSize: '10px',
+                                    fontWeight: 700,
+                                    textTransform: 'uppercase',
+                                    letterSpacing: '0.04em',
+                                    padding: '2px 7px',
+                                    borderRadius: '12px',
+                                    background: '#FAF6EB',
+                                    color: '#9E7D23',
+                                    border: '1px solid #E8D9AF'
+                                  }}>
+                                    MUN GA Paid
+                                  </span>
+                                )}
+                              </div>
+                            </td>
+                            <td style={{ padding: '14px 16px' }}>
+                              <div style={{ fontWeight: 600, color: '#0d1f2d' }}>{app.name}</div>
+                              <div style={{ fontSize: '12px', color: '#4a6f8a' }}>{app.country}</div>
+                            </td>
+                            <td style={{ padding: '14px 16px' }}>
+                              <div style={{ color: '#1c3f5e' }}>{app.email}</div>
+                              <div style={{ fontSize: '12px', color: '#4a6f8a' }}>{app.phone}</div>
+                            </td>
 
-                          {/* SECTION 1 SPECIFIC COLUMNS */}
-                          {activeTab === 'SECTION1' && (
-                            <>
-                              <td style={{ padding: '14px 16px' }}>
-                                <span style={{ color: app.admissionAccepted ? '#047857' : '#991b1b', fontWeight: 600 }}>
-                                  {app.admissionAccepted ? '✓ Yes' : '✕ No'}
-                                </span>
-                              </td>
-                              <td style={{ padding: '14px 16px' }}>
-                                <span style={{ color: app.munAttendanceConfirmed ? '#047857' : '#991b1b', fontWeight: 600 }}>
-                                  {app.munAttendanceConfirmed ? '✓ Yes' : '✕ No'}
-                                </span>
-                              </td>
-                              <td style={{ padding: '14px 16px' }}>
-                                <span style={{ color: app.dressCodeAcknowledged ? '#047857' : '#991b1b', fontWeight: 600 }}>
-                                  {app.dressCodeAcknowledged ? '✓ Yes' : '✕ No'}
-                                </span>
-                              </td>
-                            </>
-                          )}
+                            {/* SECTION 1 SPECIFIC COLUMNS */}
+                            {activeTab === 'SECTION1' && (
+                              <>
+                                <td style={{ padding: '14px 16px' }}>
+                                  <span style={{ color: app.admissionAccepted ? '#047857' : '#991b1b', fontWeight: 600 }}>
+                                    {app.admissionAccepted ? '✓ Yes' : '✕ No'}
+                                  </span>
+                                </td>
+                                <td style={{ padding: '14px 16px' }}>
+                                  <span style={{ color: app.munAttendanceConfirmed ? '#047857' : '#991b1b', fontWeight: 600 }}>
+                                    {app.munAttendanceConfirmed ? '✓ Yes' : '✕ No'}
+                                  </span>
+                                </td>
+                                <td style={{ padding: '14px 16px' }}>
+                                  <span style={{ color: app.dressCodeAcknowledged ? '#047857' : '#991b1b', fontWeight: 600 }}>
+                                    {app.dressCodeAcknowledged ? '✓ Yes' : '✕ No'}
+                                  </span>
+                                </td>
+                              </>
+                            )}
 
-                          {/* SECTION 2 SPECIFIC COLUMNS */}
-                          {activeTab === 'SECTION2' && (
-                            <>
-                              <td style={{ padding: '14px 16px', color: '#1c3f5e', fontWeight: 500 }}>
-                                {app.method}
-                              </td>
-                              <td style={{ padding: '14px 16px', fontFamily: "'Courier New', monospace", color: '#007ab8' }}>
-                                {app.txnRef}
-                              </td>
-                              <td style={{ padding: '14px 16px' }}>
-                                <span style={{
-                                  display: 'inline-flex',
-                                  alignItems: 'center',
-                                  gap: '5px',
-                                  padding: '4px 10px',
-                                  borderRadius: '20px',
-                                  fontSize: '12px',
-                                  fontWeight: 600,
-                                  background: badge.bg,
-                                  border: `1px solid ${badge.border}`,
-                                  color: badge.color
-                                }}>
-                                  {badge.icon}
-                                  {app.status}
-                                </span>
-                              </td>
-                              <td style={{ padding: '14px 16px', color: '#4a6f8a', fontSize: '12px' }}>
-                                {app.verifiedAt ? new Date(app.verifiedAt).toLocaleDateString() : 'N/A'}
-                              </td>
-                            </>
-                          )}
-
-                          {/* ALL RECS COLUMNS */}
-                          {activeTab === 'ALL' && (
-                            <>
-                              <td style={{ padding: '14px 16px', color: '#1c3f5e', fontWeight: 500 }}>
-                                {app.method}
-                              </td>
-                              <td style={{ padding: '14px 16px', fontFamily: "'Courier New', monospace", color: '#007ab8' }}>
-                                {app.txnRef}
-                              </td>
-                              <td style={{ padding: '14px 16px' }}>
-                                <span style={{
-                                  display: 'inline-flex',
-                                  alignItems: 'center',
-                                  gap: '5px',
-                                  padding: '4px 10px',
-                                  borderRadius: '20px',
-                                  fontSize: '12px',
-                                  fontWeight: 600,
-                                  background: badge.bg,
-                                  border: `1px solid ${badge.border}`,
-                                  color: badge.color
-                                }}>
-                                  {badge.icon}
-                                  {app.status}
-                                </span>
-                              </td>
-                            </>
-                          )}
-
-                          <td style={{ padding: '14px 16px', color: '#4a6f8a', fontSize: '12px' }}>
-                            {new Date(app.createdAt).toLocaleDateString()}
-                          </td>
-
-                          <td style={{ padding: '14px 16px', textAlign: 'right' }}>
-                            <div style={{ display: 'inline-flex', gap: '8px' }}>
-                              <button
-                                onClick={() => setSelectedApplicant(app)}
-                                title="View Details"
-                                style={{
-                                  padding: '6px 10px',
-                                  background: '#f4f9fd',
-                                  border: '1px solid #d0e6f3',
-                                  borderRadius: '6px',
-                                  color: '#007ab8',
-                                  cursor: 'pointer',
-                                  display: 'inline-flex',
-                                  alignItems: 'center',
-                                  gap: '4px',
-                                  fontSize: '12px',
-                                  fontWeight: 500
-                                }}
-                              >
-                                <Eye size={14} />
-                                View
-                              </button>
-
-                              {/* Status Update Quick Selector */}
-                              {activeTab !== 'SECTION1' && (
-                                <select
-                                  value={app.status}
-                                  onChange={(e) => {
-                                    if (e.target.value !== app.status) {
-                                      setStatusUpdateTarget({
-                                        applicantId: app.id,
-                                        confirmationId: app.confirmationId,
-                                        newStatus: e.target.value,
-                                        currentStatus: app.status
-                                      });
-                                    }
-                                  }}
-                                  style={{
-                                    padding: '5px 8px',
+                            {/* SECTION 2 SPECIFIC COLUMNS */}
+                            {activeTab === 'SECTION2' && (
+                              <>
+                                <td style={{ padding: '14px 16px', color: '#1c3f5e', fontWeight: 500 }}>
+                                  {app.method}
+                                </td>
+                                <td style={{ padding: '14px 16px', fontFamily: "'Courier New', monospace", color: '#007ab8' }}>
+                                  {app.txnRef}
+                                </td>
+                                <td style={{ padding: '14px 16px' }}>
+                                  <span style={{
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: '5px',
+                                    padding: '4px 10px',
+                                    borderRadius: '20px',
                                     fontSize: '12px',
-                                    borderRadius: '6px',
+                                    fontWeight: 600,
+                                    background: badge.bg,
+                                    border: `1px solid ${badge.border}`,
+                                    color: badge.color
+                                  }}>
+                                    {badge.icon}
+                                    {app.status}
+                                  </span>
+                                </td>
+                                <td style={{ padding: '14px 16px', color: '#4a6f8a', fontSize: '12px' }}>
+                                  {app.verifiedAt ? new Date(app.verifiedAt).toLocaleDateString() : 'N/A'}
+                                </td>
+                              </>
+                            )}
+
+                            {/* ALL RECS COLUMNS */}
+                            {activeTab === 'ALL' && (
+                              <>
+                                <td style={{ padding: '14px 16px', color: '#1c3f5e', fontWeight: 500 }}>
+                                  {app.method}
+                                </td>
+                                <td style={{ padding: '14px 16px', fontFamily: "'Courier New', monospace", color: '#007ab8' }}>
+                                  {app.txnRef}
+                                </td>
+                                <td style={{ padding: '14px 16px' }}>
+                                  <span style={{
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: '5px',
+                                    padding: '4px 10px',
+                                    borderRadius: '20px',
+                                    fontSize: '12px',
+                                    fontWeight: 600,
+                                    background: badge.bg,
+                                    border: `1px solid ${badge.border}`,
+                                    color: badge.color
+                                  }}>
+                                    {badge.icon}
+                                    {app.status}
+                                  </span>
+                                </td>
+                              </>
+                            )}
+
+                            <td style={{ padding: '14px 16px', color: '#4a6f8a', fontSize: '12px' }}>
+                              {new Date(app.createdAt).toLocaleDateString()}
+                            </td>
+
+                            <td style={{ padding: '14px 16px', textAlign: 'right' }}>
+                              <div style={{ display: 'inline-flex', gap: '8px' }}>
+                                <button
+                                  onClick={() => setSelectedApplicant(app)}
+                                  title="View Details"
+                                  style={{
+                                    padding: '6px 10px',
+                                    background: '#f4f9fd',
                                     border: '1px solid #d0e6f3',
-                                    background: '#ffffff',
-                                    color: '#0d1f2d',
-                                    cursor: 'pointer'
+                                    borderRadius: '6px',
+                                    color: '#007ab8',
+                                    cursor: 'pointer',
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: '4px',
+                                    fontSize: '12px',
+                                    fontWeight: 500
                                   }}
                                 >
-                                  <option value="Pending">Pending</option>
-                                  <option value="Awaiting Payment">Awaiting Payment</option>
-                                  <option value="Verified">Verified</option>
-                                  <option value="Rejected">Rejected</option>
-                                </select>
-                              )}
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                    })}
+                                  <Eye size={14} />
+                                  View
+                                </button>
+
+                                {/* Status Update Quick Selector */}
+                                {activeTab !== 'SECTION1' && (
+                                  <select
+                                    value={app.status}
+                                    onChange={(e) => {
+                                      if (e.target.value !== app.status) {
+                                        setStatusUpdateTarget({
+                                          applicantId: app.id,
+                                          confirmationId: app.confirmationId,
+                                          newStatus: e.target.value,
+                                          currentStatus: app.status
+                                        });
+                                      }
+                                    }}
+                                    style={{
+                                      padding: '5px 8px',
+                                      fontSize: '12px',
+                                      borderRadius: '6px',
+                                      border: '1px solid #d0e6f3',
+                                      background: '#ffffff',
+                                      color: '#0d1f2d',
+                                      cursor: 'pointer'
+                                    }}
+                                  >
+                                    <option value="Pending">Pending</option>
+                                    <option value="Awaiting Payment">Awaiting Payment</option>
+                                    <option value="Verified">Verified</option>
+                                    <option value="Rejected">Rejected</option>
+                                  </select>
+                                )}
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })
+                    )}
                   </tbody>
                 </table>
               </div>
@@ -1111,8 +1267,8 @@ const AdminDashboard = () => {
                 color: '#4a6f8a'
               }}>
                 <div>
-                  Showing {Math.min((currentPage - 1) * itemsPerPage + 1, filteredApplicants.length)} to{' '}
-                  {Math.min(currentPage * itemsPerPage, filteredApplicants.length)} of {filteredApplicants.length} records
+                  Showing {Math.min((currentPage - 1) * itemsPerPage + 1, (activeTab === 'GRADUATION' ? filteredGradRegistrations.length : filteredApplicants.length))} to{' '}
+                  {Math.min(currentPage * itemsPerPage, (activeTab === 'GRADUATION' ? filteredGradRegistrations.length : filteredApplicants.length))} of {(activeTab === 'GRADUATION' ? filteredGradRegistrations.length : filteredApplicants.length)} records
                 </div>
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -1135,21 +1291,21 @@ const AdminDashboard = () => {
                   </button>
 
                   <span style={{ fontWeight: 600, color: '#013664' }}>
-                    Page {currentPage} of {totalPages}
+                    Page {currentPage} of {(activeTab === 'GRADUATION' ? gradTotalPages : totalPages)}
                   </span>
 
                   <button
-                    disabled={currentPage === totalPages}
-                    onClick={() => setCurrentPage(p => Math.min(p + 1, totalPages))}
+                    disabled={currentPage === (activeTab === 'GRADUATION' ? gradTotalPages : totalPages)}
+                    onClick={() => setCurrentPage(p => Math.min(p + 1, (activeTab === 'GRADUATION' ? gradTotalPages : totalPages)))}
                     style={{
                       display: 'inline-flex',
                       alignItems: 'center',
                       padding: '6px 12px',
                       borderRadius: '6px',
                       border: '1px solid #d0e6f3',
-                      background: currentPage === totalPages ? '#f3f4f6' : '#ffffff',
-                      color: currentPage === totalPages ? '#9ca3af' : '#013664',
-                      cursor: currentPage === totalPages ? 'not-allowed' : 'pointer'
+                      background: currentPage === (activeTab === 'GRADUATION' ? gradTotalPages : totalPages) ? '#f3f4f6' : '#ffffff',
+                      color: currentPage === (activeTab === 'GRADUATION' ? gradTotalPages : totalPages) ? '#9ca3af' : '#013664',
+                      cursor: currentPage === (activeTab === 'GRADUATION' ? gradTotalPages : totalPages) ? 'not-allowed' : 'pointer'
                     }}
                   >
                     Next
