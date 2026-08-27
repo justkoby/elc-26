@@ -123,17 +123,17 @@ const AdminDashboard = () => {
       const { data, error } = await supabase
         .from('graduation_registrations')
         .select('*')
-        .order('created_at', { ascending: false });
+        .order('submitted_at', { ascending: sortOrder === 'asc' });
 
       if (error) throw error;
       setGradRegistrations(data || []);
     } catch (err) {
       console.error('Failed to load graduation registrations:', err);
-      setGradError('Failed to load graduation records. Please check database permissions or try again.');
+      setGradError(err?.message || 'Failed to load graduation records. Please check database permissions or try again.');
     } finally {
       setGradLoading(false);
     }
-  }, []);
+  }, [sortOrder]);
 
   useEffect(() => {
     if (activeTab === 'GRADUATION') {
@@ -1046,7 +1046,7 @@ const AdminDashboard = () => {
                               {reg.balance_due !== undefined && reg.balance_due !== null ? `GHS ${reg.balance_due}` : 'N/A'}
                             </td>
                             <td style={{ padding: '14px 16px', color: '#4a6f8a', fontSize: '12px' }}>
-                              {reg.created_at ? new Date(reg.created_at).toLocaleDateString() : 'N/A'}
+                              {reg.submitted_at ? new Date(reg.submitted_at).toLocaleDateString() : 'N/A'}
                             </td>
                             <td style={{ padding: '14px 16px', textAlign: 'right' }}>
                               {/* Read only, no actions */}
