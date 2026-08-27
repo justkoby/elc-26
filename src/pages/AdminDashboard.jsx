@@ -25,11 +25,25 @@ import {
   GraduationCap
 } from 'lucide-react';
 
+const getCompactSessionName = (fullName) => {
+  if (!fullName) return '';
+  const parts = fullName.split('(')[0].split(',');
+  if (parts.length > 0) {
+    return parts[0].trim();
+  }
+  return fullName;
+};
+
 const AdminDashboard = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState('');
   const [applicants, setApplicants] = useState([]);
+
+  // Session selections state
+  const [sessionSelections, setSessionSelections] = useState([]);
+  const [sessionsLoading, setSessionsLoading] = useState(false);
+  const [sessionsError, setSessionsError] = useState(false);
 
   // Graduation registrations state
   const [gradRegistrations, setGradRegistrations] = useState([]);
@@ -112,6 +126,22 @@ const AdminDashboard = () => {
       setErrorMsg('Failed to load applicant records. Please check database permissions or try again.');
     } finally {
       setLoading(false);
+    }
+
+    // Load session availability independently
+    setSessionsLoading(true);
+    setSessionsError(false);
+    try {
+      const { data, error } = await supabase
+        .from('applicant_session_selections')
+        .select('*');
+      if (error) throw error;
+      setSessionSelections(data || []);
+    } catch (err) {
+      console.error('Failed to load applicant session selections:', err);
+      setSessionsError(true);
+    } finally {
+      setSessionsLoading(false);
     }
   }, [sortOrder]);
 
@@ -225,6 +255,19 @@ const AdminDashboard = () => {
       return matchesSearch && matchesMethod && matchesStatus;
     });
   }, [processedApplicants, activeTab, searchQuery, methodFilter, statusFilter]);
+
+  // Group session selections by applicant_id
+  const sessionsByApplicantId = useMemo(() => {
+    const map = {};
+    sessionSelections.forEach((sel) => {
+      const appId = sel.applicant_id;
+      if (!map[appId]) {
+        map[appId] = [];
+      }
+      map[appId].push(sel.session_name);
+    });
+    return map;
+  }, [sessionSelections]);
 
   // Filtered & Searched Graduation Registrations
   const filteredGradRegistrations = useMemo(() => {
@@ -979,6 +1022,7 @@ const AdminDashboard = () => {
                               <th style={{ padding: '14px 16px' }}>Offer Accepted</th>
                               <th style={{ padding: '14px 16px' }}>MUN Attending</th>
                               <th style={{ padding: '14px 16px' }}>Dress Code</th>
+                              <th style={{ padding: '14px 16px' }}>Availability</th>
                             </>
                           ) : activeTab === 'SECTION2' ? (
                             <>
@@ -1049,7 +1093,26 @@ const AdminDashboard = () => {
                               {reg.submitted_at ? new Date(reg.submitted_at).toLocaleDateString() : 'N/A'}
                             </td>
                             <td style={{ padding: '14px 16px', textAlign: 'right' }}>
-                              {/* Read only, no actions */}
+                              <button
+                                onClick={() => setSelectedApplicant(reg)}
+                                title="View Details"
+                                style={{
+                                  padding: '6px 10px',
+                                  background: '#f4f9fd',
+                                  border: '1px solid #d0e6f3',
+                                  borderRadius: '6px',
+                                  color: '#007ab8',
+                                  cursor: 'pointer',
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: '4px',
+                                  fontSize: '12px',
+                                  fontWeight: 500
+                                }}
+                              >
+                                <Eye size={14} />
+                                View
+                              </button>
                             </td>
                           </tr>
                         );
@@ -1121,6 +1184,49 @@ const AdminDashboard = () => {
                                   <span style={{ color: app.dressCodeAcknowledged ? '#047857' : '#991b1b', fontWeight: 600 }}>
                                     {app.dressCodeAcknowledged ? '✓ Yes' : '✕ No'}
                                   </span>
+                                </td>
+                                <td style={{ padding: '14px 16px' }}>
+                                  {sessionsLoading ? (
+                                    <span style={{ color: '#4a6f8a', fontSize: '12px' }}>Loading...</span>
+                                  ) : sessionsError ? (
+                                    <span style={{ color: '#b91c1c', fontSize: '12px', fontWeight: 500 }}>Unable to load availability</span>
+                                  ) : (
+                                    (() => {
+                                      const appSessions = sessionsByApplicantId[app.id] || [];
+                                      if (appSessions.length === 0) {
+                                        return <span style={{ color: '#9ca3af', fontStyle: 'italic' }}>Not selected</span>;
+                                      }
+                                      const firstSession = appSessions[0];
+                                      const compactName = getCompactSessionName(firstSession);
+                                      return (
+                                        <div style={{ display: 'inline-flex', alignItems: 'center', flexWrap: 'wrap' }}>
+                                          <span style={{
+                                            display: 'inline-flex',
+                                            alignItems: 'center',
+                                            padding: '2px 8px',
+                                            borderRadius: '12px',
+                                            fontSize: '11px',
+                                            fontWeight: 500,
+                                            background: '#e0f2fe',
+                                            color: '#0369a1',
+                                            border: '1px solid #bae6fd'
+                                          }} title={firstSession}>
+                                            {compactName}
+                                          </span>
+                                          {appSessions.length > 1 && (
+                                            <span style={{
+                                              marginLeft: '4px',
+                                              fontSize: '11px',
+                                              color: '#4a6f8a',
+                                              fontWeight: 600
+                                            }} title={appSessions.slice(1).join(', ')}>
+                                              +{appSessions.length - 1} more
+                                            </span>
+                                          )}
+                                        </div>
+                                      );
+                                    })()
+                                  )}
                                 </td>
                               </>
                             )}
@@ -1320,216 +1426,337 @@ const AdminDashboard = () => {
       </main>
 
       {/* APPLICANT DETAILS MODAL */}
-      {selectedApplicant && (
-        <div style={{
-          position: 'fixed',
-          top: 0, left: 0, right: 0, bottom: 0,
-          background: 'rgba(1, 54, 100, 0.45)',
-          backdropFilter: 'blur(4px)',
-          zIndex: 1000,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: '20px'
-        }}>
+      {selectedApplicant && (() => {
+        const isGraduation = Boolean(selectedApplicant.graduation_reference);
+        const refNum = isGraduation ? selectedApplicant.graduation_reference : selectedApplicant.ref;
+        return (
           <div style={{
-            background: '#ffffff',
-            borderRadius: '16px',
-            maxWidth: '650px',
-            width: '100%',
-            maxHeight: '90vh',
-            overflowY: 'auto',
-            boxShadow: '0 20px 40px rgba(0,0,0,0.2)',
-            border: '1px solid #d0e6f3'
+            position: 'fixed',
+            top: 0, left: 0, right: 0, bottom: 0,
+            background: 'rgba(1, 54, 100, 0.45)',
+            backdropFilter: 'blur(4px)',
+            zIndex: 1000,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '20px'
           }}>
-            {/* Modal Header */}
             <div style={{
-              background: '#013664',
-              color: '#ffffff',
-              padding: '20px 24px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              borderBottom: '3px solid #009EDB'
+              background: '#ffffff',
+              borderRadius: '16px',
+              maxWidth: '650px',
+              width: '100%',
+              maxHeight: '90vh',
+              overflowY: 'auto',
+              boxShadow: '0 20px 40px rgba(0,0,0,0.2)',
+              border: '1px solid #d0e6f3'
             }}>
-              <div>
-                <span style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.08em', color: '#c8e9f8' }}>Applicant Details</span>
-                <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: '20px', margin: '2px 0 0 0', color: '#ffffff' }}>
-                  {selectedApplicant.name}
-                </h3>
-              </div>
-              <button
-                onClick={() => setSelectedApplicant(null)}
-                style={{ background: 'none', border: 'none', color: '#ffffff', cursor: 'pointer', opacity: 0.8 }}
-              >
-                <X size={22} />
-              </button>
-            </div>
-
-            {/* Modal Content */}
-            <div style={{ padding: '24px' }}>
-              
-              {/* Reference Box */}
+              {/* Modal Header */}
               <div style={{
-                background: '#f4f9fd',
-                border: '1px solid #d0e6f3',
-                borderRadius: '10px',
-                padding: '14px 18px',
-                marginBottom: '20px',
+                background: '#013664',
+                color: '#ffffff',
+                padding: '20px 24px',
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'space-between'
+                justifyContent: 'space-between',
+                borderBottom: '3px solid #009EDB'
               }}>
                 <div>
-                  <div style={{ fontSize: '11px', textTransform: 'uppercase', color: '#4a6f8a', fontWeight: 600 }}>Reference Number</div>
-                  <div style={{ fontFamily: "'Courier New', monospace", fontSize: '18px', fontWeight: 700, color: '#013664' }}>
-                    {selectedApplicant.ref}
-                  </div>
+                  <span style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.08em', color: '#c8e9f8' }}>
+                    {isGraduation ? 'Graduation Details' : 'Applicant Details'}
+                  </span>
+                  <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: '20px', margin: '2px 0 0 0', color: '#ffffff' }}>
+                    {isGraduation ? selectedApplicant.full_name : selectedApplicant.name}
+                  </h3>
                 </div>
                 <button
-                  onClick={() => {
-                    navigator.clipboard.writeText(selectedApplicant.ref);
-                    showToast('Reference copied to clipboard!', 'info');
-                  }}
-                  style={{
-                    background: '#ffffff',
-                    border: '1px solid #d0e6f3',
-                    borderRadius: '6px',
-                    padding: '6px 12px',
-                    fontSize: '12px',
-                    color: '#007ab8',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '4px'
-                  }}
+                  onClick={() => setSelectedApplicant(null)}
+                  style={{ background: 'none', border: 'none', color: '#ffffff', cursor: 'pointer', opacity: 0.8 }}
                 >
-                  <Copy size={13} />
-                  Copy
+                  <X size={22} />
                 </button>
               </div>
 
-              {/* Grid 1: Personal & Contact */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '20px' }}>
-                <div>
-                  <label style={{ fontSize: '12px', color: '#4a6f8a', fontWeight: 600, display: 'block' }}>Email Address</label>
-                  <span style={{ fontSize: '14px', color: '#0d1f2d' }}>{selectedApplicant.email}</span>
+              {/* Modal Content */}
+              <div style={{ padding: '24px' }}>
+                
+                {/* Reference Box */}
+                <div style={{
+                  background: '#f4f9fd',
+                  border: '1px solid #d0e6f3',
+                  borderRadius: '10px',
+                  padding: '14px 18px',
+                  marginBottom: '20px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between'
+                }}>
+                  <div>
+                    <div style={{ fontSize: '11px', textTransform: 'uppercase', color: '#4a6f8a', fontWeight: 600 }}>Reference Number</div>
+                    <div style={{ fontFamily: "'Courier New', monospace", fontSize: '18px', fontWeight: 700, color: '#013664' }}>
+                      {refNum}
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(refNum);
+                      showToast('Reference copied to clipboard!', 'info');
+                    }}
+                    style={{
+                      background: '#ffffff',
+                      border: '1px solid #d0e6f3',
+                      borderRadius: '6px',
+                      padding: '6px 12px',
+                      fontSize: '12px',
+                      color: '#007ab8',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px'
+                    }}
+                  >
+                    <Copy size={13} />
+                    Copy
+                  </button>
                 </div>
-                <div>
-                  <label style={{ fontSize: '12px', color: '#4a6f8a', fontWeight: 600, display: 'block' }}>Phone Number</label>
-                  <span style={{ fontSize: '14px', color: '#0d1f2d' }}>{selectedApplicant.phone}</span>
-                </div>
-                <div>
-                  <label style={{ fontSize: '12px', color: '#4a6f8a', fontWeight: 600, display: 'block' }}>Country</label>
-                  <span style={{ fontSize: '14px', color: '#0d1f2d' }}>{selectedApplicant.country}</span>
-                </div>
-                <div>
-                  <label style={{ fontSize: '12px', color: '#4a6f8a', fontWeight: 600, display: 'block' }}>Submission Date</label>
-                  <span style={{ fontSize: '14px', color: '#0d1f2d' }}>{new Date(selectedApplicant.createdAt).toLocaleString()}</span>
-                </div>
+
+                {isGraduation ? (
+                  // Graduation Details Layout
+                  <>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '20px' }}>
+                      <div>
+                        <label style={{ fontSize: '12px', color: '#4a6f8a', fontWeight: 600, display: 'block' }}>Email Address</label>
+                        <span style={{ fontSize: '14px', color: '#0d1f2d' }}>{selectedApplicant.email || 'N/A'}</span>
+                      </div>
+                      <div>
+                        <label style={{ fontSize: '12px', color: '#4a6f8a', fontWeight: 600, display: 'block' }}>Phone Number</label>
+                        <span style={{ fontSize: '14px', color: '#0d1f2d' }}>{selectedApplicant.phone || 'N/A'}</span>
+                      </div>
+                      <div>
+                        <label style={{ fontSize: '12px', color: '#4a6f8a', fontWeight: 600, display: 'block' }}>Payment Plan</label>
+                        <span style={{ fontSize: '14px', color: '#0d1f2d', fontWeight: 600 }}>{selectedApplicant.payment_plan || 'N/A'}</span>
+                      </div>
+                      <div>
+                        <label style={{ fontSize: '12px', color: '#4a6f8a', fontWeight: 600, display: 'block' }}>Submission Date</label>
+                        <span style={{ fontSize: '14px', color: '#0d1f2d' }}>
+                          {selectedApplicant.submitted_at ? new Date(selectedApplicant.submitted_at).toLocaleString() : 'N/A'}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '20px' }}>
+                      <div>
+                        <label style={{ fontSize: '12px', color: '#4a6f8a', fontWeight: 600, display: 'block' }}>Submitted Amount</label>
+                        <span style={{ fontSize: '14px', color: '#007ab8', fontWeight: 600 }}>
+                          {selectedApplicant.submitted_amount !== undefined && selectedApplicant.submitted_amount !== null ? `GHS ${selectedApplicant.submitted_amount}` : 'N/A'}
+                        </span>
+                      </div>
+                      <div>
+                        <label style={{ fontSize: '12px', color: '#4a6f8a', fontWeight: 600, display: 'block' }}>Balance Due</label>
+                        <span style={{ fontSize: '14px', color: '#b91c1c', fontWeight: 600 }}>
+                          {selectedApplicant.balance_due !== undefined && selectedApplicant.balance_due !== null ? `GHS ${selectedApplicant.balance_due}` : 'N/A'}
+                        </span>
+                      </div>
+                      <div>
+                        <label style={{ fontSize: '12px', color: '#4a6f8a', fontWeight: 600, display: 'block' }}>Payment Status</label>
+                        <span style={{
+                          display: 'inline-block',
+                          marginTop: '2px',
+                          padding: '3px 10px',
+                          borderRadius: '12px',
+                          fontSize: '12px',
+                          fontWeight: 600,
+                          ...getStatusBadgeStyle(selectedApplicant.payment_status)
+                        }}>
+                          {selectedApplicant.payment_status || 'Pending'}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Selected Training Sessions (Graduation version) */}
+                    <div style={{
+                      background: '#f4f9fd',
+                      borderRadius: '10px',
+                      padding: '14px 18px',
+                      marginBottom: '20px'
+                    }}>
+                      <div style={{ fontSize: '12px', fontWeight: 700, color: '#1c3f5e', textTransform: 'uppercase', marginBottom: '10px' }}>
+                        Selected Training Sessions
+                      </div>
+                      {Array.isArray(selectedApplicant.training_sessions) && selectedApplicant.training_sessions.length > 0 ? (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                          {selectedApplicant.training_sessions.map((sess, idx) => (
+                            <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px' }}>
+                              <CheckCircle2 size={16} color="#059669" />
+                              <span>{sess}</span>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <span style={{ color: '#9ca3af', fontStyle: 'italic', fontSize: '13px' }}>Not selected</span>
+                      )}
+                    </div>
+                  </>
+                ) : (
+                  // Existing Applicant Details Layout
+                  <>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '20px' }}>
+                      <div>
+                        <label style={{ fontSize: '12px', color: '#4a6f8a', fontWeight: 600, display: 'block' }}>Email Address</label>
+                        <span style={{ fontSize: '14px', color: '#0d1f2d' }}>{selectedApplicant.email}</span>
+                      </div>
+                      <div>
+                        <label style={{ fontSize: '12px', color: '#4a6f8a', fontWeight: 600, display: 'block' }}>Phone Number</label>
+                        <span style={{ fontSize: '14px', color: '#0d1f2d' }}>{selectedApplicant.phone}</span>
+                      </div>
+                      <div>
+                        <label style={{ fontSize: '12px', color: '#4a6f8a', fontWeight: 600, display: 'block' }}>Country</label>
+                        <span style={{ fontSize: '14px', color: '#0d1f2d' }}>{selectedApplicant.country}</span>
+                      </div>
+                      <div>
+                        <label style={{ fontSize: '12px', color: '#4a6f8a', fontWeight: 600, display: 'block' }}>Submission Date</label>
+                        <span style={{ fontSize: '14px', color: '#0d1f2d' }}>{new Date(selectedApplicant.createdAt).toLocaleString()}</span>
+                      </div>
+                    </div>
+
+                    {/* Selected Training Sessions Section (For Applicants) */}
+                    <div style={{
+                      background: '#f4f9fd',
+                      borderRadius: '10px',
+                      padding: '14px 18px',
+                      marginBottom: '20px'
+                    }}>
+                      <div style={{ fontSize: '12px', fontWeight: 700, color: '#1c3f5e', textTransform: 'uppercase', marginBottom: '10px' }}>
+                        Selected Training Sessions
+                      </div>
+                      {sessionsLoading ? (
+                        <span style={{ color: '#4a6f8a', fontSize: '13px' }}>Loading availability...</span>
+                      ) : sessionsError ? (
+                        <span style={{ color: '#b91c1c', fontSize: '13px', fontWeight: 500 }}>Unable to load availability</span>
+                      ) : (
+                        (() => {
+                          const appSessions = sessionsByApplicantId[selectedApplicant.id] || [];
+                          if (appSessions.length === 0) {
+                            return <span style={{ color: '#9ca3af', fontStyle: 'italic', fontSize: '13px' }}>Not selected</span>;
+                          }
+                          return (
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                              {appSessions.map((sess, idx) => (
+                                <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px' }}>
+                                  <CheckCircle2 size={16} color="#059669" />
+                                  <span>{sess}</span>
+                                </div>
+                              ))}
+                            </div>
+                          );
+                        })()
+                      )}
+                    </div>
+
+                    {/* Grid 2: Confirmations */}
+                    <div style={{
+                      background: '#f4f9fd',
+                      borderRadius: '10px',
+                      padding: '14px 18px',
+                      marginBottom: '20px'
+                    }}>
+                      <div style={{ fontSize: '12px', fontWeight: 700, color: '#1c3f5e', textTransform: 'uppercase', marginBottom: '10px' }}>
+                        Section 1: Confirmed Statements
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '13px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <CheckCircle2 size={16} color={selectedApplicant.admissionAccepted ? "#059669" : "#dc2626"} />
+                          <span>Admission Offer Accepted: <strong>{selectedApplicant.admissionAccepted ? 'Yes' : 'No'}</strong></span>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <CheckCircle2 size={16} color={selectedApplicant.munAttendanceConfirmed ? "#059669" : "#dc2626"} />
+                          <span>Model UN GA Attendance Confirmed: <strong>{selectedApplicant.munAttendanceConfirmed ? 'Yes' : 'No'}</strong></span>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <CheckCircle2 size={16} color={selectedApplicant.dressCodeAcknowledged ? "#059669" : "#dc2626"} />
+                          <span>Official Dress Code Acknowledged: <strong>{selectedApplicant.dressCodeAcknowledged ? 'Yes' : 'No'}</strong></span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Grid 3: Payment Details */}
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '20px' }}>
+                      <div>
+                        <label style={{ fontSize: '12px', color: '#4a6f8a', fontWeight: 600, display: 'block' }}>Payment Method</label>
+                        <span style={{ fontSize: '14px', fontWeight: 600, color: '#013664' }}>{selectedApplicant.method}</span>
+                      </div>
+                      <div>
+                        <label style={{ fontSize: '12px', color: '#4a6f8a', fontWeight: 600, display: 'block' }}>Amount</label>
+                        <span style={{ fontSize: '14px', fontWeight: 600, color: '#007ab8' }}>{selectedApplicant.amount}</span>
+                      </div>
+                      <div>
+                        <label style={{ fontSize: '12px', color: '#4a6f8a', fontWeight: 600, display: 'block' }}>Transaction Reference</label>
+                        <span style={{ fontFamily: "'Courier New', monospace", fontSize: '14px', fontWeight: 700, color: '#013664' }}>{selectedApplicant.txnRef}</span>
+                      </div>
+                      <div>
+                        <label style={{ fontSize: '12px', color: '#4a6f8a', fontWeight: 600, display: 'block' }}>Payment Status</label>
+                        <span style={{
+                          display: 'inline-block',
+                          marginTop: '2px',
+                          padding: '3px 10px',
+                          borderRadius: '12px',
+                          fontSize: '12px',
+                          fontWeight: 600,
+                          ...getStatusBadgeStyle(selectedApplicant.status)
+                        }}>
+                          {selectedApplicant.status}
+                        </span>
+                      </div>
+                    </div>
+
+                    {selectedApplicant.notes && (
+                      <div style={{ marginBottom: '20px' }}>
+                        <label style={{ fontSize: '12px', color: '#4a6f8a', fontWeight: 600, display: 'block', marginBottom: '4px' }}>Additional Notes</label>
+                        <div style={{ background: '#f4f9fd', border: '1px solid #d0e6f3', borderRadius: '8px', padding: '10px 14px', fontSize: '13px', color: '#1c3f5e' }}>
+                          {selectedApplicant.notes}
+                        </div>
+                      </div>
+                    )}
+
+                    {selectedApplicant.verifiedAt && (
+                      <div style={{ fontSize: '12px', color: '#047857', background: '#ecfdf5', padding: '10px 14px', borderRadius: '8px', border: '1px solid #a7f3d0' }}>
+                        ✓ Verified on {new Date(selectedApplicant.verifiedAt).toLocaleString()}
+                      </div>
+                    )}
+                  </>
+                )}
+
               </div>
 
-              {/* Grid 2: Confirmations */}
+              {/* Modal Footer */}
               <div style={{
+                padding: '16px 24px',
+                borderTop: '1px solid #d0e6f3',
                 background: '#f4f9fd',
-                borderRadius: '10px',
-                padding: '14px 18px',
-                marginBottom: '20px'
+                display: 'flex',
+                justifyContent: 'flex-end'
               }}>
-                <div style={{ fontSize: '12px', fontWeight: 700, color: '#1c3f5e', textTransform: 'uppercase', marginBottom: '10px' }}>
-                  Section 1: Confirmed Statements
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '13px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <CheckCircle2 size={16} color={selectedApplicant.admissionAccepted ? "#059669" : "#dc2626"} />
-                    <span>Admission Offer Accepted: <strong>{selectedApplicant.admissionAccepted ? 'Yes' : 'No'}</strong></span>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <CheckCircle2 size={16} color={selectedApplicant.munAttendanceConfirmed ? "#059669" : "#dc2626"} />
-                    <span>Model UN GA Attendance Confirmed: <strong>{selectedApplicant.munAttendanceConfirmed ? 'Yes' : 'No'}</strong></span>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <CheckCircle2 size={16} color={selectedApplicant.dressCodeAcknowledged ? "#059669" : "#dc2626"} />
-                    <span>Official Dress Code Acknowledged: <strong>{selectedApplicant.dressCodeAcknowledged ? 'Yes' : 'No'}</strong></span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Grid 3: Payment Details */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '20px' }}>
-                <div>
-                  <label style={{ fontSize: '12px', color: '#4a6f8a', fontWeight: 600, display: 'block' }}>Payment Method</label>
-                  <span style={{ fontSize: '14px', fontWeight: 600, color: '#013664' }}>{selectedApplicant.method}</span>
-                </div>
-                <div>
-                  <label style={{ fontSize: '12px', color: '#4a6f8a', fontWeight: 600, display: 'block' }}>Amount</label>
-                  <span style={{ fontSize: '14px', fontWeight: 600, color: '#007ab8' }}>{selectedApplicant.amount}</span>
-                </div>
-                <div>
-                  <label style={{ fontSize: '12px', color: '#4a6f8a', fontWeight: 600, display: 'block' }}>Transaction Reference</label>
-                  <span style={{ fontFamily: "'Courier New', monospace", fontSize: '14px', fontWeight: 700, color: '#013664' }}>{selectedApplicant.txnRef}</span>
-                </div>
-                <div>
-                  <label style={{ fontSize: '12px', color: '#4a6f8a', fontWeight: 600, display: 'block' }}>Payment Status</label>
-                  <span style={{
-                    display: 'inline-block',
-                    marginTop: '2px',
-                    padding: '3px 10px',
-                    borderRadius: '12px',
-                    fontSize: '12px',
+                <button
+                  onClick={() => setSelectedApplicant(null)}
+                  style={{
+                    padding: '9px 18px',
+                    background: '#013664',
+                    color: '#ffffff',
+                    border: 'none',
+                    borderRadius: '8px',
+                    fontSize: '13px',
                     fontWeight: 600,
-                    ...getStatusBadgeStyle(selectedApplicant.status)
-                  }}>
-                    {selectedApplicant.status}
-                  </span>
-                </div>
+                    cursor: 'pointer'
+                  }}
+                >
+                  Close Details
+                </button>
               </div>
 
-              {selectedApplicant.notes && (
-                <div style={{ marginBottom: '20px' }}>
-                  <label style={{ fontSize: '12px', color: '#4a6f8a', fontWeight: 600, display: 'block', marginBottom: '4px' }}>Additional Notes</label>
-                  <div style={{ background: '#f4f9fd', border: '1px solid #d0e6f3', borderRadius: '8px', padding: '10px 14px', fontSize: '13px', color: '#1c3f5e' }}>
-                    {selectedApplicant.notes}
-                  </div>
-                </div>
-              )}
-
-              {selectedApplicant.verifiedAt && (
-                <div style={{ fontSize: '12px', color: '#047857', background: '#ecfdf5', padding: '10px 14px', borderRadius: '8px', border: '1px solid #a7f3d0' }}>
-                  ✓ Verified on {new Date(selectedApplicant.verifiedAt).toLocaleString()}
-                </div>
-              )}
-
             </div>
-
-            {/* Modal Footer */}
-            <div style={{
-              padding: '16px 24px',
-              borderTop: '1px solid #d0e6f3',
-              background: '#f4f9fd',
-              display: 'flex',
-              justifyContent: 'flex-end'
-            }}>
-              <button
-                onClick={() => setSelectedApplicant(null)}
-                style={{
-                  padding: '9px 18px',
-                  background: '#013664',
-                  color: '#ffffff',
-                  border: 'none',
-                  borderRadius: '8px',
-                  fontSize: '13px',
-                  fontWeight: 600,
-                  cursor: 'pointer'
-                }}
-              >
-                Close Details
-              </button>
-            </div>
-
           </div>
-        </div>
-      )}
+        );
+      })()}
 
       {/* STATUS UPDATE CONFIRMATION DIALOG */}
       {statusUpdateTarget && (
