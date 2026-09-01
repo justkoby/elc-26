@@ -22,8 +22,10 @@ import {
   ShieldCheck,
   CreditCard,
   FileCheck,
-  GraduationCap
+  GraduationCap,
+  FileSpreadsheet
 } from 'lucide-react';
+import * as XLSX from 'xlsx';
 
 const getCompactSessionName = (fullName) => {
   if (!fullName) return '';
@@ -70,6 +72,9 @@ const AdminDashboard = () => {
 
   // Toast Notification
   const [toast, setToast] = useState(null);
+
+  // Export Loading State
+  const [exporting, setExporting] = useState(false);
 
   const navigate = useNavigate();
 
@@ -378,60 +383,239 @@ const AdminDashboard = () => {
     }
   };
 
-  // CSV Export
-  const exportToCSV = () => {
-    if (filteredApplicants.length === 0) {
-      showToast('No records to export.', 'info');
-      return;
+  // Excel Export
+  const exportToExcel = async () => {
+    if (exporting) return;
+    setExporting(true);
+
+    try {
+      let exportData = [];
+      let isGraduationExport = activeTab === 'GRADUATION';
+      let sheetName = 'Registrations';
+      let fileSlug = 'registrations';
+
+      if (activeTab === 'ALL') {
+        sheetName = 'All Records';
+        fileSlug = 'all-records';
+        exportData = filteredApplicants;
+      } else if (activeTab === 'SECTION1') {
+        sheetName = 'YLC Cohort Registrations';
+        fileSlug = 'ylc-cohort-registrations';
+        exportData = filteredApplicants;
+      } else if (activeTab === 'SECTION2') {
+        sheetName = 'MUN GA Delegate Payments';
+        fileSlug = 'mun-ga-delegate-payments';
+        exportData = filteredApplicants;
+      } else if (activeTab === 'GRADUATION') {
+        sheetName = 'Graduation Registrations';
+        fileSlug = 'graduation-registrations';
+        exportData = filteredGradRegistrations;
+      }
+
+      if (!exportData || exportData.length === 0) {
+        showToast('No matching records found to export.', 'error');
+        setExporting(false);
+        return;
+      }
+
+      const formatDate = (dateStr) => {
+        if (!dateStr) return 'N/A';
+        try {
+          const d = new Date(dateStr);
+          if (isNaN(d.getTime())) return 'N/A';
+          return d.toISOString().replace('T', ' ').slice(0, 19);
+        } catch (e) {
+          return 'N/A';
+        }
+      };
+
+      const formatCurrencyCell = (amt) => {
+        let num = 0;
+        if (typeof amt === 'number') {
+          num = amt;
+        } else if (typeof amt === 'string') {
+          const clean = amt.replace(/[^0-9.-]+/g, '');
+          num = parseFloat(clean) || 0;
+        }
+        return { v: num, t: 'n', z: '"GHS "#,##0.00' };
+      };
+
+      let headers = [];
+      let rows = [];
+
+      if (isGraduationExport) {
+        headers = [
+          'Reference Number',
+          'Full Name',
+          'Email Address',
+          'Phone Number',
+          'Registration Section / Type',
+          'Payment Plan',
+          'Required Amount (GHS)',
+          'Submitted Amount (GHS)',
+          'Balance Due (GHS)',
+          'Payment Status',
+          'Transaction Reference Number',
+          'Selected Training Sessions',
+          'Registration Date',
+          'Payment Submission Date',
+          'Verification Date',
+          'Verified / Rejected By',
+          'Rejection Reason / Admin Notes'
+        ];
+
+        rows = exportData.map((reg) => {
+          const sessions = Array.isArray(reg.training_sessions) 
+            ? reg.training_sessions.join(', ')
+            : (reg.training_sessions || 'N/A');
+
+          const reqAmt = reg.required_amount !== undefined && reg.required_amount !== null ? reg.required_amount : 500;
+          const subAmt = reg.submitted_amount !== undefined && reg.submitted_amount !== null ? reg.submitted_amount : 0;
+          const balDue = reg.balance_due !== undefined && reg.balance_due !== null ? reg.balance_due : (reqAmt - subAmt);
+
+          return [
+            reg.graduation_reference || reg.ref || 'N/A',
+            reg.full_name || 'N/A',
+            reg.email || 'N/A',
+            reg.phone || 'N/A',
+            'Graduation Registration',
+            reg.payment_plan || 'Full',
+            formatCurrencyCell(reqAmt),
+            formatCurrencyCell(subAmt),
+            formatCurrencyCell(balDue),
+            reg.payment_status || 'Pending Verification',
+            reg.transaction_reference || reg.txnRef || 'N/A',
+            sessions,
+            formatDate(reg.submitted_at || reg.created_at),
+            formatDate(reg.submitted_at || reg.created_at),
+            formatDate(reg.verified_at),
+            reg.verified_by || (reg.verified_at ? 'System Admin' : 'N/A'),
+            reg.rejection_reason || reg.additional_notes || reg.notes || ''
+          ];
+        });
+      } else {
+        headers = [
+          'Reference Number',
+          'Full Name',
+          'Email Address',
+          'Phone Number',
+          'Country',
+          'Registration Section / Type',
+          'Payment Plan',
+          'Required Amount (GHS)',
+          'Submitted Amount (GHS)',
+          'Balance Due (GHS)',
+          'Payment Method',
+          'Payment Status',
+          'Transaction Reference Number',
+          'Admission Offer Accepted',
+          'MUN Attendance Confirmed',
+          'Dress Code Acknowledged',
+          'Selected Training Sessions',
+          'Registration Date',
+          'Verification Date',
+          'Verified / Rejected By',
+          'Rejection Reason / Admin Notes'
+        ];
+
+        rows = exportData.map((app) => {
+          const appSessions = sessionsByApplicantId[app.id] || [];
+          const sessionsStr = appSessions.length > 0 ? appSessions.join(', ') : 'N/A';
+
+          const isFree = app.isFreeRegistration;
+          const reqAmt = isFree ? 0 : 500;
+          let subAmt = 0;
+          if (!isFree) {
+            if (app.amount && app.amount.includes('GHS')) {
+              subAmt = parseFloat(app.amount.replace('GHS', '').trim()) || 0;
+            } else if (app.status === 'Verified') {
+              subAmt = 500;
+            }
+          }
+          const balDue = isFree ? 0 : (app.status === 'Verified' ? 0 : Math.max(0, reqAmt - subAmt));
+
+          return [
+            app.ref || 'N/A',
+            app.name || 'N/A',
+            app.email || 'N/A',
+            app.phone || 'N/A',
+            app.country || 'N/A',
+            app.programType || 'N/A',
+            isFree ? 'Free' : (app.paymentPlan || 'Full Payment'),
+            formatCurrencyCell(reqAmt),
+            formatCurrencyCell(subAmt),
+            formatCurrencyCell(balDue),
+            app.method || 'N/A',
+            app.status || 'Pending',
+            app.txnRef || 'N/A',
+            app.admissionAccepted ? 'Yes' : 'No',
+            app.munAttendanceConfirmed ? 'Yes' : 'No',
+            app.dressCodeAcknowledged ? 'Yes' : 'No',
+            sessionsStr,
+            formatDate(app.createdAt),
+            formatDate(app.verifiedAt),
+            app.verifiedBy || (app.verifiedAt ? 'System Admin' : 'N/A'),
+            app.notes || app.rejectionReason || ''
+          ];
+        });
+      }
+
+      const aoaData = [headers, ...rows];
+      const ws = XLSX.utils.aoa_to_sheet(aoaData);
+
+      // Freeze top row
+      ws['!views'] = [{ state: 'frozen', xSplit: 0, ySplit: 1, activeCell: 'A2' }];
+
+      // Enable AutoFilter
+      const range = XLSX.utils.decode_range(ws['!ref']);
+      ws['!autofilter'] = { ref: XLSX.utils.encode_range(range) };
+
+      // Bold column headings
+      for (let C = range.s.c; C <= range.e.c; ++C) {
+        const cellAddress = XLSX.utils.encode_cell({ r: 0, c: C });
+        if (ws[cellAddress]) {
+          ws[cellAddress].s = {
+            font: { bold: true }
+          };
+        }
+      }
+
+      // Auto column widths
+      const colWidths = headers.map((header, colIndex) => {
+        let maxLen = header.length;
+        rows.forEach((row) => {
+          const val = row[colIndex];
+          let strVal = '';
+          if (val !== null && val !== undefined) {
+            if (typeof val === 'object' && val.v !== undefined) {
+              strVal = typeof val.v === 'number' ? `GHS ${val.v.toFixed(2)}` : String(val.v);
+            } else {
+              strVal = String(val);
+            }
+          }
+          if (strVal.length > maxLen) {
+            maxLen = strVal.length;
+          }
+        });
+        return { wch: Math.min(Math.max(maxLen + 3, 12), 45) };
+      });
+      ws['!cols'] = colWidths;
+
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, sheetName.substring(0, 31));
+
+      const todayStr = new Date().toISOString().slice(0, 10);
+      const filename = `${fileSlug}-${todayStr}.xlsx`;
+
+      XLSX.writeFile(wb, filename);
+
+      showToast(`Exported ${exportData.length} record(s) to ${filename}`, 'success');
+    } catch (err) {
+      console.error('Excel export failed:', err);
+      showToast('Failed to generate Excel file. Please try again.', 'error');
+    } finally {
+      setExporting(false);
     }
-
-    const headers = [
-      'Applicant Reference',
-      'Full Name',
-      'Email',
-      'Phone',
-      'Country',
-      'Admission Accepted',
-      'MUN Confirmed',
-      'Dress Code Confirmed',
-      'Payment Method',
-      'Amount',
-      'Transaction Reference',
-      'Payment Status',
-      'Submission Date',
-      'Verified Date'
-    ];
-
-    const rows = filteredApplicants.map((app) => [
-      `"${app.ref}"`,
-      `"${app.name}"`,
-      `"${app.email}"`,
-      `"${app.phone}"`,
-      `"${app.country}"`,
-      `"${app.admissionAccepted ? 'Yes' : 'No'}"`,
-      `"${app.munAttendanceConfirmed ? 'Yes' : 'No'}"`,
-      `"${app.dressCodeAcknowledged ? 'Yes' : 'No'}"`,
-      `"${app.method}"`,
-      `"${app.amount}"`,
-      `"${app.txnRef}"`,
-      `"${app.status}"`,
-      `"${new Date(app.createdAt).toLocaleString()}"`,
-      `"${app.verifiedAt ? new Date(app.verifiedAt).toLocaleString() : 'N/A'}"`
-    ]);
-
-    const csvContent =
-      'data:text/csv;charset=utf-8,' +
-      [headers.join(','), ...rows.map((e) => e.join(','))].join('\n');
-
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement('a');
-    link.setAttribute('href', encodedUri);
-    link.setAttribute('download', `YLC_${activeTab}_Records_${new Date().toISOString().slice(0, 10)}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-
-    showToast('CSV export downloaded successfully.', 'success');
   };
 
   const getStatusBadgeStyle = (status) => {
@@ -573,7 +757,7 @@ const AdminDashboard = () => {
             </p>
           </div>
 
-          <div style={{ display: 'flex', gap: '10px' }}>
+          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', alignItems: 'center' }}>
             <button
               onClick={activeTab === 'GRADUATION' ? fetchGraduationData : fetchDashboardData}
               disabled={activeTab === 'GRADUATION' ? gradLoading : loading}
@@ -588,7 +772,7 @@ const AdminDashboard = () => {
                 borderRadius: '8px',
                 fontSize: '13px',
                 fontWeight: 600,
-                cursor: 'pointer',
+                cursor: (activeTab === 'GRADUATION' ? gradLoading : loading) ? 'not-allowed' : 'pointer',
                 boxShadow: '0 1px 3px rgba(0, 86, 138, 0.06)'
               }}
             >
@@ -596,28 +780,38 @@ const AdminDashboard = () => {
               Refresh
             </button>
 
-            {activeTab !== 'GRADUATION' && (
-              <button
-                onClick={exportToCSV}
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  background: '#009EDB',
-                  color: '#ffffff',
-                  border: 'none',
-                  padding: '10px 16px',
-                  borderRadius: '8px',
-                  fontSize: '13px',
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                  boxShadow: '0 4px 12px rgba(0, 158, 219, 0.2)'
-                }}
-              >
-                <Download size={15} />
-                Export CSV
-              </button>
-            )}
+            <button
+              onClick={exportToExcel}
+              disabled={exporting}
+              title="Export records to Excel (.xlsx)"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                background: '#009EDB',
+                color: '#ffffff',
+                border: 'none',
+                padding: '10px 16px',
+                borderRadius: '8px',
+                fontSize: '13px',
+                fontWeight: 600,
+                cursor: exporting ? 'not-allowed' : 'pointer',
+                opacity: exporting ? 0.75 : 1,
+                boxShadow: '0 4px 12px rgba(0, 158, 219, 0.2)'
+              }}
+            >
+              {exporting ? (
+                <>
+                  <RefreshCw size={15} className="animate-spin" />
+                  Generating Excel...
+                </>
+              ) : (
+                <>
+                  <FileSpreadsheet size={15} />
+                  Export Excel
+                </>
+              )}
+            </button>
           </div>
         </div>
 
