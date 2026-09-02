@@ -81,6 +81,11 @@ const AdminLogin = () => {
         return;
       }
 
+      // Initialize session timestamps for inactivity tracking & 8h hard cap
+      const now = Date.now().toString();
+      localStorage.setItem('ylc_admin_session_start', now);
+      localStorage.setItem('ylc_admin_last_activity', now);
+
       // Authorized admin -> redirect to /admin
       navigate('/admin', { replace: true });
     } catch (err) {

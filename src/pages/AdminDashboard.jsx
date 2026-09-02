@@ -180,6 +180,21 @@ const AdminDashboard = () => {
 
   // Handle Logout
   const handleLogout = async () => {
+    try {
+      if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
+        const channel = new BroadcastChannel('ylc_admin_session_channel');
+        channel.postMessage({ type: 'LOGOUT' });
+        channel.close();
+      }
+      localStorage.setItem('ylc_admin_logout_signal', Date.now().toString());
+    } catch (e) {
+      // Ignore broadcast channel errors
+    }
+
+    localStorage.removeItem('ylc_admin_session_start');
+    localStorage.removeItem('ylc_admin_last_activity');
+    sessionStorage.clear();
+
     await supabase.auth.signOut();
     navigate('/admin/login', { replace: true });
   };
